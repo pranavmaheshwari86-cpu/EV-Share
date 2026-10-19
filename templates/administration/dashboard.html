@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Operations Portal — EV Share{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <!-- Header -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-dark text-white rounded-pill px-3 py-1 text-uppercase small fw-bold">Admin Portal</span>
+                <span class="text-muted small">Yamuna Corridor Pilot Management</span>
+            </div>
+            <h1 class="h3 font-display fw-bold mb-0 mt-1">Platform Operations & Metrics</h1>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a href="{% url 'administration:host_verifications' %}" class="btn-ev-pill btn-ev-secondary btn-sm position-relative">
+                KYC Verifications
+                {% if pending_verifications > 0 %}
+                    <span class="badge bg-danger rounded-pill ms-1">{{ pending_verifications }}</span>
+                {% endif %}
+            </a>
+            <a href="{% url 'administration:charger_moderation' %}" class="btn-ev-pill btn-ev-secondary btn-sm position-relative">
+                Charger Moderation
+                {% if pending_chargers > 0 %}
+                    <span class="badge bg-danger rounded-pill ms-1">{{ pending_chargers }}</span>
+                {% endif %}
+            </a>
+            <a href="{% url 'administration:disputes' %}" class="btn-ev-pill btn-ev-secondary btn-sm position-relative">
+                Disputes & Tickets
+                {% if active_disputes > 0 %}
+                    <span class="badge bg-warning text-dark rounded-pill ms-1">{{ active_disputes }}</span>
+                {% endif %}
+            </a>
+        </div>
+    </div>
+
+    <!-- Metric Stat Cards -->
+    <div class="row g-3 mb-4">
+        <!-- Community -->
+        <div class="col-sm-6 col-lg-3">
+            <div class="ev-card p-3 h-100">
+                <div class="text-muted small text-uppercase fw-semibold mb-1">Registered Users</div>
+                <div class="fs-3 font-display fw-bold text-dark mb-1">{{ total_users }}</div>
+                <div class="text-muted small">
+                    <span class="text-primary fw-semibold">{{ total_hosts }}</span> verified hosts
+                </div>
+            </div>
+        </div>
+
+        <!-- Infrastructure -->
+        <div class="col-sm-6 col-lg-3">
+            <div class="ev-card p-3 h-100">
+                <div class="text-muted small text-uppercase fw-semibold mb-1">Corridor Chargers</div>
+                <div class="fs-3 font-display fw-bold text-dark mb-1">{{ total_chargers }}</div>
+                <div class="text-muted small">
+                    <span class="text-success fw-semibold">{{ approved_chargers }}</span> active • 
+                    <span class="text-warning-emphasis fw-semibold">{{ pending_chargers }}</span> pending review
+                </div>
+            </div>
+        </div>
+
+        <!-- Reservations -->
+        <div class="col-sm-6 col-lg-3">
+            <div class="ev-card p-3 h-100">
+                <div class="text-muted small text-uppercase fw-semibold mb-1">Total Reservations</div>
+                <div class="fs-3 font-display fw-bold text-dark mb-1">{{ total_bookings }}</div>
+                <div class="text-muted small">
+                    <span class="text-success fw-semibold">{{ completed_bookings }}</span> visits successfully completed
+                </div>
+            </div>
+        </div>
+
+        <!-- Simulated Finance -->
+        <div class="col-sm-6 col-lg-3">
+            <div class="ev-card p-3 h-100 border-primary border-opacity-25">
+                <div class="text-muted small text-uppercase fw-semibold mb-1">Simulated GMV</div>
+                <div class="fs-3 font-display fw-bold text-primary mb-1">₹{{ sim_gross_gmv|floatformat:0 }}</div>
+                <div class="text-muted small">
+                    Platform Fee: ₹{{ sim_platform_comm|floatformat:0 }} • Payouts: ₹{{ sim_host_payouts|floatformat:0 }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Navigation Hub -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <a href="{% url 'administration:host_verifications' %}" class="ev-card p-3 d-block text-decoration-none text-dark h-100">
+                <div class="fw-bold mb-1">📋 Host KYC Applications</div>
+                <p class="text-muted small mb-0">Review identity proof, electricity meter photos, and approve eligible hosts.</p>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'administration:charger_moderation' %}" class="ev-card p-3 d-block text-decoration-none text-dark h-100">
+                <div class="fw-bold mb-1">🔌 Charger Moderation</div>
+                <p class="text-muted small mb-0">Approve, reject, or suspend charger listings and examine connector specs.</p>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'administration:booking_inspector' %}" class="ev-card p-3 d-block text-decoration-none text-dark h-100">
+                <div class="fw-bold mb-1">🔍 Booking Inspector</div>
+                <p class="text-muted small mb-0">Live audit of slot locks, transaction references, and session states.</p>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'administration:users' %}" class="ev-card p-3 d-block text-decoration-none text-dark h-100">
+                <div class="fw-bold mb-1">👥 User & Role Access</div>
+                <p class="text-muted small mb-0">Manage platform permissions, host badges, and account suspensions.</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Audit Activity -->
+    <div class="ev-card p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="h5 font-display fw-bold mb-0">Recent Immutable Audit Trail</h2>
+            <a href="{% url 'administration:audit_logs' %}" class="btn-ev-pill btn-ev-secondary btn-sm">View All Logs</a>
+        </div>
+
+        {% if recent_audit %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 small">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Timestamp (UTC)</th>
+                            <th>Actor</th>
+                            <th>Action</th>
+                            <th>Target</th>
+                            <th>Context Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in recent_audit %}
+                        <tr>
+                            <td class="font-monospace text-muted">{{ log.timestamp|date:"d M Y, H:i:s" }}</td>
+                            <td><strong class="text-dark">{{ log.actor_email }}</strong></td>
+                            <td><span class="badge bg-secondary-subtle text-secondary-emphasis">{{ log.action }}</span></td>
+                            <td>{{ log.target_type }} <span class="font-monospace text-muted">({{ log.target_id|truncatechars:8 }})</span></td>
+                            <td class="text-muted font-monospace small">{{ log.details|default:"{}" }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <p class="text-muted small mb-0">No audit events logged yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

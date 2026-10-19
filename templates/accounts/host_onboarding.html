@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 760px;">
+  <div class="mb-4">
+    <span class="text-uppercase small fw-bold text-primary">Host Verification</span>
+    <h1 class="h2 fw-semibold">Become a Verified Charger Host</h1>
+    <p class="text-muted">To protect drivers and ensure safety, all hosts along the Yamuna Expressway pilot must complete this identity and property verification before listings become bookable.</p>
+  </div>
+
+  {% if verification %}
+    <div class="p-4 bg-white rounded-4 shadow-sm border mb-4">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-semibold mb-0">Application Status</h5>
+        {% if verification.status == 'approved' %}
+          <span class="evs-badge evs-badge-verified">Approved Host</span>
+        {% elif verification.status == 'submitted' or verification.status == 'under_review' %}
+          <span class="evs-badge evs-badge-pending">Under Review</span>
+        {% elif verification.status == 'rejected' %}
+          <span class="badge bg-danger">Rejected</span>
+        {% endif %}
+      </div>
+
+      <div class="small text-muted mb-3">
+        Submitted on: {{ verification.submitted_at|date:"d M Y, H:i" }} &bull; Category: <strong class="text-dark">{{ verification.host_type|title }}</strong>
+      </div>
+
+      {% if verification.admin_notes %}
+        <div class="p-3 bg-light rounded-3 small mb-3">
+          <strong>Reviewer Remarks:</strong> {{ verification.admin_notes }}
+        </div>
+      {% endif %}
+
+      {% if verification.status == 'approved' %}
+        <div class="alert alert-success d-flex align-items-center justify-content-between mb-0" style="border-radius: var(--radius-sm);">
+          <div>Your host credentials have been verified! You can publish live charger listings.</div>
+          <a href="{% url 'chargers:create' %}" class="btn btn-primary btn-sm text-nowrap">+ List a Charger</a>
+        </div>
+      {% else %}
+        <p class="small text-muted mb-0">Our operations team verifies property access and ID proofs within 24 hours. You can update your submission below if needed.</p>
+      {% endif %}
+    </div>
+  {% endif %}
+
+  <div class="p-4 p-md-5 bg-white rounded-4 shadow-sm border">
+    <h5 class="fw-semibold mb-4">Host Onboarding Details</h5>
+
+    <form method="POST" action="{% url 'accounts:host_onboarding' %}" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label" for="host_type">Host Category</label>
+          <select name="host_type" id="host_type" class="form-select" required>
+            <option value="residential" {% if verification and verification.host_type == 'residential' %}selected{% endif %}>Residential Home / Villa</option>
+            <option value="commercial_hotel" {% if verification and verification.host_type == 'commercial_hotel' %}selected{% endif %}>Hotel / Resort</option>
+            <option value="commercial_restaurant" {% if verification and verification.host_type == 'commercial_restaurant' %}selected{% endif %}>Highway Restaurant / Dhaba</option>
+            <option value="commercial_office" {% if verification and verification.host_type == 'commercial_office' %}selected{% endif %}>Office / Workplace</option>
+            <option value="commercial_parking" {% if verification and verification.host_type == 'commercial_parking' %}selected{% endif %}>Commercial Parking / Hub</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="business_name">Business / Property Name (Optional)</label>
+          <input type="text" name="business_name" id="business_name" class="form-control" placeholder="e.g. Highway Midway Retreat" value="{{ verification.business_name|default:'' }}">
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="property_address">Full Property Address</label>
+        <textarea name="property_address" id="property_address" class="form-control" rows="2" required placeholder="Plot / Flat, Building, Landmark, City, State">{{ verification.property_address|default:'' }}</textarea>
+        <small class="text-muted">Exact residential details are never made public without an active booking.</small>
+      </div>
+
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <label class="form-label" for="id_proof_type">Identity / Business Proof Type</label>
+          <select name="id_proof_type" id="id_proof_type" class="form-select" required>
+            <option value="aadhaar">Aadhaar Card</option>
+            <option value="pan">PAN Card</option>
+            <option value="gstin">GST Registration Certificate</option>
+            <option value="electricity_bill">Electricity Utility Bill</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="id_proof_number">Proof Document Number</label>
+          <input type="text" name="id_proof_number" id="id_proof_number" class="form-control" placeholder="XXXX-XXXX-XXXX" required value="{{ verification.id_proof_number|default:'' }}">
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <label class="form-label" for="id_proof_file">Upload ID Document (PDF / Image)</label>
+          <input type="file" name="id_proof_file" id="id_proof_file" class="form-control">
+          {% if verification and verification.id_proof_file %}
+            <small class="text-muted">Uploaded: {{ verification.id_proof_file }}</small>
+          {% endif %}
+        </div>
+        <div class="col-md-6">
+          <label class="form-label" for="property_permission_file">Property Permission / Utility Bill</label>
+          <input type="file" name="property_permission_file" id="property_permission_file" class="form-control">
+        </div>
+      </div>
+
+      <div class="p-3 bg-light rounded-3 mb-4">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="safety_declaration_agreed" id="safety_declaration" required {% if verification and verification.safety_declaration_agreed %}checked{% endif %}>
+          <label class="form-check-label small" for="safety_declaration">
+            <strong>Electrical & Property Declaration:</strong> I confirm that the charging facility has dedicated circuit protection (MCB/RCCB), compliant earthing, and that I have legal permission to share electrical access on this property.
+          </label>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 py-2">
+        {% if verification %}Update Application{% else %}Submit Verification Application{% endif %}
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

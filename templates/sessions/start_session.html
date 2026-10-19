@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Start Charging Visit — Booking {{ booking.booking_reference }} — EV Share{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-lg-7">
+        <div class="mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 text-muted small">
+                    <li class="breadcrumb-item"><a href="{% url 'bookings:detail' booking_ref=booking.booking_reference %}" class="text-decoration-none">Booking #{{ booking.booking_reference }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Start Visit</li>
+                </ol>
+            </nav>
+            <h1 class="h3 font-display fw-bold mb-1">Check-In & Start Charging</h1>
+            <p class="text-muted small">Record arrival at host driveway and initialize physical charging visit.</p>
+        </div>
+
+        <form method="POST" class="ev-card p-4 p-md-5 mb-4">
+            {% csrf_token %}
+
+            <div class="border-bottom pb-3 mb-3">
+                <h2 class="h6 font-display fw-bold mb-1">{{ booking.charger.title }}</h2>
+                <div class="text-muted small">
+                    Host: <strong class="text-dark">{{ booking.host.first_name }} {{ booking.host.last_name }}</strong> • 
+                    Connector: <strong class="text-dark">{{ booking.charger.connector_types|join:", " }}</strong>
+                </div>
+            </div>
+
+            <!-- Disclaimer Notice -->
+            <div class="alert alert-light border small text-muted mb-4">
+                <strong>Notice on Telemetry:</strong> In the pilot stage, energy readings are manually recorded by the driver or host. Unverified values are transparently designated as manual self-reports.
+            </div>
+
+            <div class="mb-3">
+                <label for="meter_start_kwh" class="ev-form-label">Initial Meter / Charger Reading (kWh)</label>
+                <input type="number" step="0.1" class="form-control ev-form-control" id="meter_start_kwh" name="meter_start_kwh" value="0.0" required>
+                <div class="form-text">If dedicated submeter is unavailable, enter starting meter state (or 0.0).</div>
+            </div>
+
+            <div class="mb-4">
+                <label for="notes" class="ev-form-label">Visit Notes (Optional)</label>
+                <textarea class="form-control ev-form-control" id="notes" name="notes" rows="2" placeholder="e.g. Plugged in Tata Nexon EV on port 1"></textarea>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'bookings:detail' booking_ref=booking.booking_reference %}" class="btn-ev-pill btn-ev-secondary">Back</a>
+                <button type="submit" class="btn-ev-pill btn-ev-primary px-4">Start Charging Session →</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

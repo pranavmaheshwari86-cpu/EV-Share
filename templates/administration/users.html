@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block title %}User Management — Admin — EV Share{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 text-muted small">
+                    <li class="breadcrumb-item"><a href="{% url 'administration:dashboard' %}" class="text-decoration-none">Admin Portal</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Users & Access</li>
+                </ol>
+            </nav>
+            <h1 class="h3 font-display fw-bold mb-0">Registered Users & Permissions</h1>
+        </div>
+    </div>
+
+    <div class="ev-card p-4">
+        {% if users %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 small">
+                    <thead class="table-light">
+                        <tr>
+                            <th>User Name</th>
+                            <th>Email Address</th>
+                            <th>Roles</th>
+                            <th>Status</th>
+                            <th>Host Verified</th>
+                            <th>Registered On</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in users %}
+                        <tr>
+                            <td>
+                                <strong class="text-dark">{{ u.first_name }} {{ u.last_name }}</strong>
+                                {% if u.is_superuser %}
+                                    <span class="badge bg-danger rounded-pill ms-1">Superuser</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ u.email }}</td>
+                            <td>
+                                {% for r in u.roles %}
+                                    <span class="badge bg-light text-dark border">{{ r|title }}</span>
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {% if u.is_active %}
+                                    <span class="ev-badge ev-badge-success">Active</span>
+                                {% else %}
+                                    <span class="ev-badge ev-badge-danger">Suspended</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if u.is_host_verified %}
+                                    <span class="text-success fw-bold">✓ Verified</span>
+                                {% else %}
+                                    <span class="text-muted">No</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-muted">{{ u.created_at|date:"d M Y" }}</td>
+                            <td>
+                                {% if not u.is_superuser %}
+                                    <a href="{% url 'administration:toggle_user_status' user_id=u.id %}" class="btn-ev-pill {% if u.is_active %}btn-ev-danger{% else %}btn-ev-success{% endif %} btn-sm py-1 px-2">
+                                        {% if u.is_active %}Suspend{% else %}Activate{% endif %}
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted small">Protected</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <p class="text-muted mb-0">No registered users found.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

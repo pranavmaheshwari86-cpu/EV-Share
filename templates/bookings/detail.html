@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block title %}Booking {{ booking.booking_reference }} — EV Share{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-lg-9">
+        <!-- Top Navigation & Reference -->
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1 text-muted small">
+                        {% if is_driver %}
+                            <li class="breadcrumb-item"><a href="{% url 'bookings:driver_history' %}" class="text-decoration-none">My Bookings</a></li>
+                        {% elif is_host %}
+                            <li class="breadcrumb-item"><a href="{% url 'bookings:host_reservations' %}" class="text-decoration-none">Incoming Reservations</a></li>
+                        {% else %}
+                            <li class="breadcrumb-item"><a href="{% url 'administration:booking_inspector' %}" class="text-decoration-none">Booking Inspector</a></li>
+                        {% endif %}
+                        <li class="breadcrumb-item active" aria-current="page">{{ booking.booking_reference }}</li>
+                    </ol>
+                </nav>
+                <div class="d-flex align-items-center gap-3">
+                    <h1 class="h3 font-display fw-bold mb-0">Booking #{{ booking.booking_reference }}</h1>
+                    {% if booking.status == 'confirmed' %}
+                        <span class="ev-badge ev-badge-success">Confirmed</span>
+                    {% elif booking.status == 'active' %}
+                        <span class="ev-badge ev-badge-warning">Visit Active</span>
+                    {% elif booking.status == 'completed' %}
+                        <span class="ev-badge ev-badge-success">Completed</span>
+                    {% elif booking.status == 'cancelled' %}
+                        <span class="ev-badge ev-badge-danger">Cancelled</span>
+                    {% else %}
+                        <span class="ev-badge ev-badge-neutral">{{ booking.status|title }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Action Buttons based on state -->
+            <div class="d-flex gap-2">
+                {% if booking.status == 'confirmed' %}
+                    {% if is_driver and booking.payment_status != 'simulated_paid' %}
+                        <a href="{% url 'payments:checkout' booking_ref=booking.booking_reference %}" class="btn-ev-pill btn-ev-primary btn-sm">
+                            💳 Complete Simulated Payment
+                        </a>
+                    {% endif %}
+                    <a href="{% url 'sessions_app:start_session' booking_ref=booking.booking_reference %}" class="btn-ev-pill btn-ev-primary btn-sm">
+                        ⚡ Check-In & Start Session
+                    </a>
+                    {% if is_driver %}
+                        <a href="{% url 'bookings:cancel' booking_ref=booking.booking_reference %}" class="btn-ev-pill btn-ev-secondary text-danger btn-sm">
+                            Cancel
+                        </a>
+                    {% endif %}
+                {% elif booking.status == 'active' %}
+                    <a href="{% url 'sessions_app:end_session' booking_ref=booking.booking_reference %}" class="btn-ev-pill btn-ev-success btn-sm">
+                        🏁 Complete & Record Meter
+                    </a>
+                    <a href="{% url 'sessions_app:report_issue' booking_ref=booking.booking_reference %}" class="btn-ev-pill btn-ev-secondary text-danger btn-sm">
+                        ⚠️ Report Issue
+                    </a>
+                {% elif booking.status == 'completed' and is_driver %}
+                    <a href="{% url 'reviews:submit' booking_ref=booking.booking_reference %}" class="btn-ev-pill btn-ev-primary btn-sm">
+                        ⭐ Write a Review
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Main Booking Details Card -->
+        <div class="ev-card p-4 p-md-5 mb-4">
+            <div class="row g-4 border-bottom pb-4 mb-4">
+                <div class="col-md-7">
+                    <h2 class="h5 font-display fw-bold mb-2">{{ booking.charger.title }}</h2>
+                    <p class="text-muted small mb-2">
+                        📍 {{ booking.charger.address.city }} — {{ booking.charger.address.display_address }}
+                    </p>
+                    <div class="d-flex gap-2 mb-3">
+                        <span class="ev-badge ev-badge-neutral">{{ booking.charger.charger_type }}</span>
+                        <span class="ev-badge ev-badge-neutral">{{ booking.charger.power_output_kw }} kW</span>
+                        <span class="ev-badge ev-badge-neutral">{{ booking.charger.connector_types|join:", " }}</span>
+                    </div>
+
+                    {% if booking.vehicle_info %}
+                        <div class="bg-light p-2 rounded-3 small">
+                            <span class="text-muted">Registered Vehicle:</span>
+                            <span class="fw-semibold ms-1">{{ booking.vehicle_info.make }} {{ booking.vehicle_info.model }} ({{ booking.vehicle_info.registration_number }})</span>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-5 border-start-md ps-md-4">
+                    <div class="bg-light p-3 rounded-3">
+                        <div class="text-muted small mb-1">Time Slot Window:</div>
+                        <div class="fw-bold fs-6 text-dark mb-2">{{ booking.slot_start|date:"D, d M Y" }}</div>
+                        <div class="fw-bold fs-5 text-primary mb-3">{{ booking.slot_start|date:"H:i" }} – {{ booking.slot_end|date:"H:i" }} IST</div>
+                        
+                        <div class="d-flex justify-content-between small text-muted border-top pt-2">
+                            <span>Payment State:</span>
+                            <span class="fw-semibold {% if booking.payment_status == 'simulated_paid' %}text-success{% else %}text-warning-emphasis{% endif %}">
+                                {{ booking.payment_status|title }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Host Access & Driveway Directions (Unlocked upon Confirmation) -->
+            <div class="border-bottom pb-4 mb-4">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="fs-5">🔐</span>
+                    <h3 class="h6 font-display fw-bold mb-0">Authorized Driveway & Access Directions</h3>
+                </div>
+                
+                {% if booking.status != 'cancelled' %}
+                    <div class="p-3 rounded-3 bg-light border">
+                        <p class="mb-2 text-dark">
+                            <strong>Host Instructions:</strong> {{ booking.charger.address.private_directions|default:"Drive to premises entrance and notify the security gate of EV Share booking." }}
+                        </p>
+                        <div class="row g-2 small text-muted">
+                            <div class="col-md-6">
+                                <span>Host Name:</span> <strong class="text-dark">{{ booking.host.first_name }} {{ booking.host.last_name }}</strong>
+                            </div>
+                            <div class="col-md-6">
+                                <span>Emergency Contact:</span> <strong class="text-dark">{{ booking.host.phone|default:"+91 98765 43210 (Verified)" }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="p-3 rounded-3 bg-light text-muted small">
+                        Access instructions have been revoked due to reservation cancellation.
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Pricing Snapshot -->
+            {% if booking.pricing_snapshot %}
+            <div class="border-bottom pb-4 mb-4">
+                <h3 class="h6 font-display fw-semibold mb-3">Locked Tariff & Financial Summary</h3>
+                <div class="row g-2 small text-muted">
+                    <div class="col-6 col-md-3">
+                        <span class="d-block">Base Tariff:</span>
+                        <span class="fw-bold text-dark">₹{{ booking.pricing_snapshot.base_rate_per_kwh|floatformat:2 }}/kWh</span>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <span class="d-block">Platform Fee:</span>
+                        <span class="fw-bold text-dark">₹{{ booking.pricing_snapshot.platform_convenience_fee|floatformat:2 }}</span>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <span class="d-block">GST (18%):</span>
+                        <span class="fw-bold text-dark">₹{{ booking.pricing_snapshot.gst_amount|floatformat:2 }}</span>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <span class="d-block">Estimated Total:</span>
+                        <span class="fw-bold text-primary fs-6">₹{{ booking.pricing_snapshot.total_estimated_amount|floatformat:2 }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Active Charging Session Info if Exists -->
+            {% if session_record %}
+            <div>
+                <h3 class="h6 font-display fw-semibold mb-3">Recorded Visit Telemetry</h3>
+                <div class="p-3 rounded-3 bg-light border small">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <span class="text-muted d-block">Session Status:</span>
+                            <span class="fw-bold text-dark">{{ session_record.session_status|title }}</span>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="text-muted d-block">Energy Delivered:</span>
+                            <span class="fw-bold text-primary">{{ session_record.energy_delivered_kwh|default:"0.0" }} kWh</span>
+                        </div>
+                        <div class="col-md-4">
+                            <span class="text-muted d-block">Telemetry Verification:</span>
+                            <span class="badge bg-secondary-subtle text-secondary-emphasis">Manual Report (Unverified)</span>
+                        </div>
+                    </div>
+                    {% if session_record.host_notes %}
+                        <div class="mt-2 text-muted">
+                            <em>Notes: {{ session_record.host_notes }}</em>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

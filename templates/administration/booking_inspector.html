@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}Booking Inspector — Admin — EV Share{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 text-muted small">
+                    <li class="breadcrumb-item"><a href="{% url 'administration:dashboard' %}" class="text-decoration-none">Admin Portal</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Booking Inspector</li>
+                </ol>
+            </nav>
+            <h1 class="h3 font-display fw-bold mb-0">Platform Booking Inspector</h1>
+        </div>
+    </div>
+
+    <div class="ev-card p-4">
+        {% if bookings %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0 small">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Reference</th>
+                            <th>Charger</th>
+                            <th>Driver</th>
+                            <th>Host</th>
+                            <th>Slot Window (IST)</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for b in bookings %}
+                        <tr>
+                            <td class="font-monospace fw-bold text-dark">#{{ b.booking_reference }}</td>
+                            <td>
+                                <a href="{% url 'chargers:detail' charger_id=b.charger.id %}" class="text-decoration-none text-dark fw-semibold">
+                                    {{ b.charger.title|truncatechars:24 }}
+                                </a>
+                            </td>
+                            <td>{{ b.driver.first_name }} {{ b.driver.last_name }}</td>
+                            <td>{{ b.host.first_name }} {{ b.host.last_name }}</td>
+                            <td class="text-muted">{{ b.slot_start|date:"d M H:i" }} – {{ b.slot_end|date:"H:i" }}</td>
+                            <td>
+                                {% if b.status == 'confirmed' %}
+                                    <span class="ev-badge ev-badge-success">Confirmed</span>
+                                {% elif b.status == 'active' %}
+                                    <span class="ev-badge ev-badge-warning">Active</span>
+                                {% elif b.status == 'completed' %}
+                                    <span class="ev-badge ev-badge-success">Completed</span>
+                                {% elif b.status == 'cancelled' %}
+                                    <span class="ev-badge ev-badge-danger">Cancelled</span>
+                                {% else %}
+                                    <span class="ev-badge ev-badge-neutral">{{ b.status|title }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge {% if b.payment_status == 'simulated_paid' %}bg-success-subtle text-success{% else %}bg-secondary-subtle text-secondary{% endif %}">
+                                    {{ b.payment_status|title }}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'bookings:detail' booking_ref=b.booking_reference %}" class="btn-ev-pill btn-ev-secondary btn-sm py-1 px-2">
+                                    Inspect
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <p class="text-muted mb-0">No booking records found in database.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 500px;">
+  <div class="p-4 p-md-5 bg-white rounded-4 shadow-sm border">
+    <div class="text-center mb-4">
+      <h2 class="h3 fw-semibold">Create your EV Share Account</h2>
+      <p class="small text-muted">Join drivers and hosts powering community EV charging.</p>
+    </div>
+
+    <form method="POST" action="{% url 'accounts:register' %}">
+      {% csrf_token %}
+      
+      <div class="mb-3">
+        <label class="form-label" for="full_name">Full Name</label>
+        <input type="text" name="full_name" id="full_name" class="form-control" required placeholder="e.g. Rahul Sharma" value="{{ full_name|default:'' }}">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="email">Email Address</label>
+        <input type="email" name="email" id="email" class="form-control" required placeholder="name@domain.com" value="{{ email|default:'' }}">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label" for="phone_number">Phone Number (Optional)</label>
+        <input type="tel" name="phone_number" id="phone_number" class="form-control" placeholder="+91 98765 43210" value="{{ phone_number|default:'' }}">
+      </div>
+
+      <div class="row g-2 mb-3">
+        <div class="col-6">
+          <label class="form-label" for="password">Password</label>
+          <input type="password" name="password" id="password" class="form-control" required minlength="6">
+        </div>
+        <div class="col-6">
+          <label class="form-label" for="password_confirm">Confirm</label>
+          <input type="password" name="password_confirm" id="password_confirm" class="form-control" required minlength="6">
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label d-block">I want to primarily:</label>
+        <div class="d-flex gap-3">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="initial_role" id="role_driver" value="driver" checked>
+            <label class="form-check-label small" for="role_driver">Charge my EV (Driver)</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="initial_role" id="role_host" value="host">
+            <label class="form-check-label small" for="role_host">Share a Charger (Host)</label>
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 py-2 mb-3">Create Account</button>
+      
+      <div class="text-center small text-muted">
+        Already have an account? <a href="{% url 'accounts:login' %}" class="text-decoration-none fw-medium text-primary">Sign In</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

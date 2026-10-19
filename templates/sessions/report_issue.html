@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Report Issue — Booking {{ booking.booking_reference }} — EV Share{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-lg-6">
+        <div class="mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 text-muted small">
+                    <li class="breadcrumb-item"><a href="{% url 'bookings:detail' booking_ref=booking.booking_reference %}" class="text-decoration-none">Booking #{{ booking.booking_reference }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Report Issue</li>
+                </ol>
+            </nav>
+            <h1 class="h3 font-display fw-bold mb-1 text-danger">Report Visit Issue / Dispute</h1>
+            <p class="text-muted small">Notify platform operations immediately of charging interruptions, host absence, or hardware faults.</p>
+        </div>
+
+        <form method="POST" class="ev-card p-4 p-md-5 mb-4">
+            {% csrf_token %}
+
+            <div class="border-bottom pb-3 mb-3">
+                <h2 class="h6 font-display fw-bold mb-1">{{ booking.charger.title }}</h2>
+                <div class="small text-muted">
+                    Booking Reference: <strong>#{{ booking.booking_reference }}</strong>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="issue_description" class="ev-form-label">Detailed Description of Problem <span class="text-danger">*</span></label>
+                <textarea class="form-control ev-form-control" id="issue_description" name="issue_description" rows="4" placeholder="Describe the issue clearly (e.g. connector tripped MCB breaker, host did not respond, socket lacked grounding)" required></textarea>
+                <div class="form-text">This will immediately create an urgent operational ticket in the admin investigation queue.</div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'bookings:detail' booking_ref=booking.booking_reference %}" class="btn-ev-pill btn-ev-secondary">Cancel</a>
+                <button type="submit" class="btn-ev-pill btn-ev-danger px-4">Submit Dispute Report</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

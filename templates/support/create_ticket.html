@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}Contact Support & Grievances — EV Share{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-lg-7">
+        <div class="mb-4">
+            <h1 class="h3 font-display fw-bold mb-1">EV Share Help & Grievances</h1>
+            <p class="text-muted small">Our Yamuna Expressway corridor support team is here to assist with bookings, payments, and safety.</p>
+        </div>
+
+        <form method="POST" class="ev-card p-4 p-md-5 mb-4">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label for="category" class="ev-form-label">Issue Category <span class="text-danger">*</span></label>
+                <select class="form-select ev-form-control" id="category" name="category" required>
+                    <option value="charger_issue">Charger Hardware / Compatibility Problem</option>
+                    <option value="booking_issue">Booking / Slot Scheduling Issue</option>
+                    <option value="payment_issue">Payment / Refund Inquiry</option>
+                    <option value="safety_hazard">Safety Hazard / Driveway Inaccessibility</option>
+                    <option value="general_query" selected>General Corridor Inquiry</option>
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label for="subject" class="ev-form-label">Subject Summary <span class="text-danger">*</span></label>
+                <input type="text" class="form-control ev-form-control" id="subject" name="subject" placeholder="e.g. Need assistance with cancelled slot at Jewar" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="booking_ref" class="ev-form-label">Related Booking Reference (Optional)</label>
+                <input type="text" class="form-control ev-form-control font-monospace" id="booking_ref" name="booking_ref" placeholder="e.g. BK-202610-ABCD">
+            </div>
+
+            <div class="mb-4">
+                <label for="description" class="ev-form-label">Detailed Explanation <span class="text-danger">*</span></label>
+                <textarea class="form-control ev-form-control" id="description" name="description" rows="4" placeholder="Please provide all relevant details, milestone KM, and context..." required></textarea>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'support:list' %}" class="btn-ev-pill btn-ev-secondary">View My Tickets</a>
+                <button type="submit" class="btn-ev-pill btn-ev-primary px-4">Submit Support Ticket →</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

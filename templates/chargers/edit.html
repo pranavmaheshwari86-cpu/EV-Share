@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit {{ charger.title }} — Host Workspace — EV Share{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-lg-9">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-1 text-muted small">
+                        <li class="breadcrumb-item"><a href="{% url 'chargers:host_list' %}" class="text-decoration-none">My Listings</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Edit Listing</li>
+                    </ol>
+                </nav>
+                <h1 class="h3 font-display fw-bold mb-0">Edit Charger Listing</h1>
+            </div>
+            <a href="{% url 'chargers:host_list' %}" class="btn-ev-pill btn-ev-secondary btn-sm">Cancel</a>
+        </div>
+
+        <form method="POST" class="ev-card p-4 p-md-5">
+            {% csrf_token %}
+            
+            <div class="border-bottom pb-4 mb-4">
+                <h2 class="h5 font-display fw-semibold mb-3">1. General Information</h2>
+                <div class="mb-3">
+                    <label for="title" class="ev-form-label">Listing Title <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control ev-form-control" id="title" name="title" value="{{ charger.title }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="ev-form-label">Description & Access Notes <span class="text-danger">*</span></label>
+                    <textarea class="form-control ev-form-control" id="description" name="description" rows="3" required>{{ charger.description }}</textarea>
+                </div>
+            </div>
+
+            <div class="border-bottom pb-4 mb-4">
+                <h2 class="h5 font-display fw-semibold mb-3">2. Technical Specifications</h2>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="charger_type" class="ev-form-label">Charging Type</label>
+                        <select class="form-select ev-form-control" id="charger_type" name="charger_type">
+                            <option value="AC" {% if charger.charger_type == 'AC' %}selected{% endif %}>AC (Slow / Destination)</option>
+                            <option value="DC" {% if charger.charger_type == 'DC' %}selected{% endif %}>DC (Fast Charging)</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="power_output_kw" class="ev-form-label">Rated Power Output (kW) <span class="text-danger">*</span></label>
+                        <input type="number" step="0.1" class="form-control ev-form-control" id="power_output_kw" name="power_output_kw" value="{{ charger.power_output_kw }}" required>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <label class="ev-form-label d-block">Supported Connectors <span class="text-danger">*</span></label>
+                    <div class="d-flex flex-wrap gap-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="connector_types" value="Type 2 (AC)" id="c_type2" {% if "Type 2 (AC)" in charger.connector_types %}checked{% endif %}>
+                            <label class="form-check-label" for="c_type2">Type 2 (AC)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="connector_types" value="CCS2 (DC Fast)" id="c_ccs2" {% if "CCS2 (DC Fast)" in charger.connector_types %}checked{% endif %}>
+                            <label class="form-check-label" for="c_ccs2">CCS2 (DC Fast)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="connector_types" value="CHAdeMO" id="c_chademo" {% if "CHAdeMO" in charger.connector_types %}checked{% endif %}>
+                            <label class="form-check-label" for="c_chademo">CHAdeMO</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="connector_types" value="15A Indian 3-Pin" id="c_15a" {% if "15A Indian 3-Pin" in charger.connector_types %}checked{% endif %}>
+                            <label class="form-check-label" for="c_15a">15A Indian 3-Pin (Emergency AC)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-bottom pb-4 mb-4">
+                <h2 class="h5 font-display fw-semibold mb-3">3. Pricing & Amenities</h2>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6">
+                        <label for="price_per_kwh" class="ev-form-label">Price per kWh (₹) <span class="text-danger">*</span></label>
+                        <input type="number" step="0.5" class="form-control ev-form-control" id="price_per_kwh" name="price_per_kwh" value="{{ charger.price_per_kwh }}" required>
+                        <div class="form-text">Pilot recommendation: ₹13.00 to ₹18.00 per kWh.</div>
+                    </div>
+                </div>
+
+                <label class="ev-form-label d-block">Available On-Site Amenities</label>
+                <div class="row g-2">
+                    <div class="col-6 col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="amenities" value="Restroom" id="am_restroom" {% if "Restroom" in charger.amenities %}checked{% endif %}>
+                            <label class="form-check-label" for="am_restroom">Restroom</label>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="amenities" value="Wi-Fi" id="am_wifi" {% if "Wi-Fi" in charger.amenities %}checked{% endif %}>
+                            <label class="form-check-label" for="am_wifi">Wi-Fi</label>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="amenities" value="Café / Dining" id="am_dining" {% if "Café / Dining" in charger.amenities %}checked{% endif %}>
+                            <label class="form-check-label" for="am_dining">Café / Dining</label>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="amenities" value="Covered Parking" id="am_covered" {% if "Covered Parking" in charger.amenities %}checked{% endif %}>
+                            <label class="form-check-label" for="am_covered">Covered Parking</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-bottom pb-4 mb-4">
+                <h2 class="h5 font-display fw-semibold mb-3">4. Location & Privacy Protection</h2>
+                <div class="mb-3">
+                    <label for="display_address" class="ev-form-label">Public Display Location <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control ev-form-control" id="display_address" name="display_address" value="{{ charger.address.display_address }}" required>
+                    <div class="form-text">Visible to all travelers along Yamuna Expressway (e.g. 'Near Jewar Toll Plaza').</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="private_directions" class="ev-form-label">Private Driveway Directions & Gate Access Code</label>
+                    <textarea class="form-control ev-form-control" id="private_directions" name="private_directions" rows="2">{{ charger.address.private_directions }}</textarea>
+                    <div class="form-text text-primary">Confidential: Encrypted and shown ONLY to verified drivers after a booking is confirmed.</div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-end gap-3">
+                <a href="{% url 'chargers:host_list' %}" class="btn-ev-pill btn-ev-secondary">Cancel</a>
+                <button type="submit" class="btn-ev-pill btn-ev-primary px-4">Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

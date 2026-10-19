@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}Host KYC Verifications — Admin — EV Share{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 text-muted small">
+                    <li class="breadcrumb-item"><a href="{% url 'administration:dashboard' %}" class="text-decoration-none">Admin Portal</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Host KYC Queue</li>
+                </ol>
+            </nav>
+            <h1 class="h3 font-display fw-bold mb-0">Host KYC Verification Queue</h1>
+        </div>
+        <div class="btn-group" role="group">
+            <a href="?status=submitted" class="btn btn-sm {% if current_filter == 'submitted' %}btn-dark{% else %}btn-outline-dark{% endif %}">Pending</a>
+            <a href="?status=approved" class="btn btn-sm {% if current_filter == 'approved' %}btn-dark{% else %}btn-outline-dark{% endif %}">Approved</a>
+            <a href="?status=rejected" class="btn btn-sm {% if current_filter == 'rejected' %}btn-dark{% else %}btn-outline-dark{% endif %}">Rejected</a>
+            <a href="?status=all" class="btn btn-sm {% if current_filter == 'all' %}btn-dark{% else %}btn-outline-dark{% endif %}">All</a>
+        </div>
+    </div>
+
+    {% if verifications %}
+        <div class="row g-3">
+            {% for v in verifications %}
+            <div class="col-12">
+                <div class="ev-card p-4">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <span class="fw-bold fs-6 text-dark">{{ v.user.first_name }} {{ v.user.last_name }}</span>
+                                <span class="text-muted small">&lt;{{ v.user.email }}&gt;</span>
+                                {% if v.status == 'approved' %}
+                                    <span class="ev-badge ev-badge-success">Approved</span>
+                                {% elif v.status == 'rejected' %}
+                                    <span class="ev-badge ev-badge-danger">Rejected</span>
+                                {% else %}
+                                    <span class="ev-badge ev-badge-warning">Needs Review</span>
+                                {% endif %}
+                            </div>
+                            <div class="text-muted small">
+                                Submitted on {{ v.submitted_at|date:"d M Y, H:i" }} IST • Phone: {{ v.user.phone|default:"Not provided" }}
+                            </div>
+                        </div>
+
+                        {% if v.status != 'approved' %}
+                        <form method="POST" action="{% url 'administration:verify_host_action' verification_id=v.id %}" class="d-flex gap-2 align-items-center">
+                            {% csrf_token %}
+                            <input type="text" name="admin_notes" class="form-control form-control-sm ev-form-control" placeholder="Optional notes / reason" style="width: 220px;">
+                            <button type="submit" name="action" value="approve" class="btn-ev-pill btn-ev-success btn-sm">
+                                Approve Host
+                            </button>
+                            <button type="submit" name="action" value="reject" class="btn-ev-pill btn-ev-danger btn-sm">
+                                Reject
+                            </button>
+                        </form>
+                        {% endif %}
+                    </div>
+
+                    <div class="bg-light p-3 rounded-3 small">
+                        <div class="row g-2">
+                            <div class="col-md-4">
+                                <span class="text-muted d-block">ID Document Type:</span>
+                                <strong class="text-dark">{{ v.id_document_type|default:"Aadhaar / Passport" }}</strong>
+                            </div>
+                            <div class="col-md-4">
+                                <span class="text-muted d-block">Document Number:</span>
+                                <span class="font-monospace text-dark">{{ v.id_document_number|default:"DOC-XXXX-9876" }}</span>
+                            </div>
+                            <div class="col-md-4">
+                                <span class="text-muted d-block">Electricity Connection / Meter:</span>
+                                <span class="text-dark">{{ v.electricity_bill_details|default:"Yamuna Power Ltd. Commercial Meter #88129" }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="ev-card p-5 text-center">
+            <div class="fs-1 mb-2">✅</div>
+            <h2 class="h5 font-display fw-bold mb-1">Queue Clear</h2>
+            <p class="text-muted small mb-0">No host KYC verifications currently matching this filter.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

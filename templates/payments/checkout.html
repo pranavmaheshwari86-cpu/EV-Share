@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block title %}Simulated Payment Checkout — EV Share{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-lg-7">
+        <div class="mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 text-muted small">
+                    <li class="breadcrumb-item"><a href="{% url 'bookings:detail' booking_ref=booking.booking_reference %}" class="text-decoration-none">Booking #{{ booking.booking_reference }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Simulated Checkout</li>
+                </ol>
+            </nav>
+            <h1 class="h3 font-display fw-bold mb-1">Corridor Payment Authorization</h1>
+            <p class="text-muted small">Secure simulated transaction portal for pilot corridor testing.</p>
+        </div>
+
+        <!-- Simulation Watermark Warning -->
+        <div class="p-3 rounded-3 bg-warning-subtle text-warning-emphasis border border-warning small mb-4">
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="fs-5">⚠️</span>
+                <strong>Pilot Demonstration Environment — Sandbox Mode</strong>
+            </div>
+            <p class="mb-0">
+                Real payment processing is intentionally disabled pending regulatory pilot clearances. No actual bank transfer, card charge, or UPI debit will take place.
+            </p>
+        </div>
+
+        <form method="POST" class="ev-card p-4 p-md-5 mb-4">
+            {% csrf_token %}
+
+            <div class="border-bottom pb-3 mb-4">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="text-muted small">Transaction ID:</span>
+                    <span class="fw-bold font-monospace small">{{ transaction.transaction_reference }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="text-muted small">Charger:</span>
+                    <span class="fw-semibold text-dark">{{ booking.charger.title }}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small">Reserved Slot:</span>
+                    <span class="fw-semibold text-dark">{{ booking.slot_start|date:"d M Y, H:i" }} IST</span>
+                </div>
+            </div>
+
+            <!-- Amount Breakdown -->
+            <div class="bg-light p-3 rounded-3 mb-4">
+                <div class="d-flex justify-content-between text-muted small mb-2">
+                    <span>Estimated Charging:</span>
+                    <span class="fw-semibold text-dark">₹{{ transaction.amount|floatformat:2 }}</span>
+                </div>
+                <div class="d-flex justify-content-between text-muted small mb-2">
+                    <span>Platform Commission (15% included):</span>
+                    <span class="fw-semibold text-dark">₹{{ transaction.platform_commission|floatformat:2 }}</span>
+                </div>
+                <div class="d-flex justify-content-between text-muted small mb-2">
+                    <span>Host Estimated Net:</span>
+                    <span class="fw-semibold text-dark">₹{{ transaction.host_payout_amount|floatformat:2 }}</span>
+                </div>
+                <div class="d-flex justify-content-between pt-2 border-top text-dark fw-bold fs-5">
+                    <span>Total Authorized:</span>
+                    <span class="text-primary">₹{{ transaction.amount|floatformat:2 }}</span>
+                </div>
+            </div>
+
+            <!-- Simulation Action Toggle -->
+            <div class="mb-4">
+                <label class="ev-form-label mb-2">Select Simulation Test Outcome:</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="outcome" id="out_success" value="success" checked>
+                        <label class="form-check-label text-success fw-semibold" for="out_success">
+                            Authorize Successfully (Normal Path)
+                        </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="outcome" id="out_fail" value="failed">
+                        <label class="form-check-label text-danger fw-semibold" for="out_fail">
+                            Simulate Gateway Failure (Test Rollback)
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'bookings:detail' booking_ref=booking.booking_reference %}" class="btn-ev-pill btn-ev-secondary">Cancel</a>
+                <button type="submit" class="btn-ev-pill btn-ev-primary px-4">Execute Simulated Payment</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

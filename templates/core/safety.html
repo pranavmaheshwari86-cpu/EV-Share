@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 840px;">
+  <span class="text-uppercase small fw-bold text-danger">Safety First</span>
+  <h1 class="fw-semibold mb-4">Electrical Safety & Operating Standards</h1>
+
+  <div class="p-4 bg-white rounded-4 shadow-sm border mb-4">
+    <h4 class="fw-semibold text-danger mb-2">1. Electrical Installation Standards</h4>
+    <p class="text-muted small">All charging equipment listed on EV Share must comply with standard Indian electrical codes (CEA Standards and Central Electricity Authority Regulations for Safety and Electric Supply):</p>
+    <ul class="text-muted small ps-3 mb-0">
+      <li class="mb-2">Dedicated branch circuit with properly rated MCB (Miniature Circuit Breaker) and RCD/RCCB (Residual Current Circuit Breaker, 30mA trip sensitivity).</li>
+      <li class="mb-2">Verified grounding and earthing resistance conforming to IS 3043. Un-earthed circuits or makeshift extension cables are strictly prohibited.</li>
+      <li class="mb-2">Commercial installations must have surge protection devices (SPD) and weather-proof outdoor enclosures (IP65/IP66 rated).</li>
+    </ul>
+  </div>
+
+  <div class="p-4 bg-white rounded-4 shadow-sm border mb-4">
+    <h4 class="fw-semibold mb-2">2. Verification Reality vs. Equipment Certification</h4>
+    <p class="text-muted small"><strong>Important Disclaimer:</strong> While EV Share requires hosts to submit ID proof, photos, and safety declarations, an administrative approval does not replace on-site physical inspection or manufacturer certification. Drivers should always inspect cables, plugs, and charging points for visible wear, scorch marks, or water ingress before connecting their vehicle.</p>
+  </div>
+
+  <div class="p-4 bg-white rounded-4 shadow-sm border mb-4">
+    <h4 class="fw-semibold mb-2">3. Emergency Escalation Procedure</h4>
+    <p class="text-muted small">In the event of an electrical spark, burning odor, or equipment fault:</p>
+    <ol class="text-muted small ps-3 mb-0">
+      <li class="mb-1">Immediately hit the emergency stop button on the wallbox if safe, or switch off the primary isolator switch.</li>
+      <li class="mb-1">Do not forcibly yank a locked connector; press the unlock button inside your EV cabin.</li>
+      <li class="mb-1">Evacuate the immediate area and call emergency services if fire or smoke is present.</li>
+      <li class="mb-1">Report the incident immediately using EV Share's in-app dispute reporting tool to freeze the listing pending investigation.</li>
+    </ol>
+  </div>
+</div>
+{% endblock %}

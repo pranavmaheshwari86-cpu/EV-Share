@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Cancel Booking {{ booking.booking_reference }} — EV Share{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-lg-6">
+        <div class="mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 text-muted small">
+                    <li class="breadcrumb-item"><a href="{% url 'bookings:detail' booking_ref=booking.booking_reference %}" class="text-decoration-none">Booking #{{ booking.booking_reference }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Cancel</li>
+                </ol>
+            </nav>
+            <h1 class="h3 font-display fw-bold mb-1 text-danger">Cancel Charging Reservation</h1>
+            <p class="text-muted small">Releasing your slot makes it immediately available to other drivers along the Yamuna Expressway.</p>
+        </div>
+
+        <div class="ev-card p-4 p-md-5 mb-4">
+            <div class="border-bottom pb-3 mb-3">
+                <h2 class="h6 font-display fw-bold mb-1">{{ booking.charger.title }}</h2>
+                <div class="small text-muted">
+                    Slot: <strong>{{ booking.slot_start|date:"D, d M Y, H:i" }} – {{ booking.slot_end|date:"H:i" }} IST</strong>
+                </div>
+            </div>
+
+            <div class="alert alert-warning small mb-4">
+                <h3 class="h6 font-display fw-bold mb-1">Cancellation Terms</h3>
+                <p class="mb-0">
+                    Cancellations made more than 2 hours before the slot window qualify for a full simulated credit refund. Cancellations made inside 2 hours forfeit the corridor convenience fee.
+                </p>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="reason" class="ev-form-label">Reason for Cancellation</label>
+                    <select class="form-select ev-form-control mb-2" id="reason" name="reason" required>
+                        <option value="change_of_plans">Trip plans changed / route altered</option>
+                        <option value="battery_sufficient">Sufficient charge reached without highway stop</option>
+                        <option value="vehicle_issue">Vehicle issue or breakdown</option>
+                        <option value="host_unreachable">Host unreachable</option>
+                        <option value="other">Other reason</option>
+                    </select>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{% url 'bookings:detail' booking_ref=booking.booking_reference %}" class="btn-ev-pill btn-ev-secondary">Keep Reservation</a>
+                    <button type="submit" class="btn-ev-pill btn-ev-danger px-4">Confirm Cancellation</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

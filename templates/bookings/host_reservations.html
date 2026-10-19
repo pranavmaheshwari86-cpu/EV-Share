@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Incoming Reservations — Host Dashboard — EV Share{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <h1 class="h3 font-display fw-bold mb-1">Incoming Charger Reservations</h1>
+            <p class="text-muted small mb-0">Manage charging visits scheduled at your Yamuna Expressway host locations.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{% url 'chargers:host_list' %}" class="btn-ev-pill btn-ev-secondary btn-sm">My Chargers</a>
+            <a href="{% url 'chargers:create' %}" class="btn-ev-pill btn-ev-primary btn-sm">+ List Another Charger</a>
+        </div>
+    </div>
+
+    {% if reservations %}
+        <div class="row g-3">
+            {% for r in reservations %}
+            <div class="col-12">
+                <div class="ev-card p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="fw-bold text-dark fs-6">Booking #{{ r.booking_reference }}</span>
+                            {% if r.status == 'confirmed' %}
+                                <span class="ev-badge ev-badge-success">Confirmed</span>
+                            {% elif r.status == 'active' %}
+                                <span class="ev-badge ev-badge-warning">In Progress</span>
+                            {% elif r.status == 'completed' %}
+                                <span class="ev-badge ev-badge-success">Completed</span>
+                            {% elif r.status == 'cancelled' %}
+                                <span class="ev-badge ev-badge-danger">Cancelled</span>
+                            {% else %}
+                                <span class="ev-badge ev-badge-neutral">{{ r.status|title }}</span>
+                            {% endif %}
+                        </div>
+
+                        <h2 class="h5 font-display fw-bold mb-1">{{ r.charger.title }}</h2>
+                        <p class="text-muted small mb-2">
+                            Driver: <strong class="text-dark">{{ r.driver.first_name }} {{ r.driver.last_name }}</strong> 
+                            {% if r.vehicle_info %}
+                                • Vehicle: {{ r.vehicle_info.make }} {{ r.vehicle_info.model }} ({{ r.vehicle_info.registration_number }})
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    <div class="text-md-end">
+                        <div class="small text-muted mb-1">Scheduled Slot (IST):</div>
+                        <div class="fw-bold text-dark">{{ r.slot_start|date:"D, d M Y" }}</div>
+                        <div class="fw-bold text-primary mb-2">{{ r.slot_start|date:"H:i" }} – {{ r.slot_end|date:"H:i" }}</div>
+                        <div class="d-flex gap-2 justify-content-md-end">
+                            <a href="{% url 'bookings:detail' booking_ref=r.booking_reference %}" class="btn-ev-pill btn-ev-secondary btn-sm">
+                                View Details
+                            </a>
+                            {% if r.status == 'confirmed' %}
+                                <a href="{% url 'sessions_app:start_session' booking_ref=r.booking_reference %}" class="btn-ev-pill btn-ev-primary btn-sm">
+                                    Start Session
+                                </a>
+                            {% elif r.status == 'active' %}
+                                <a href="{% url 'sessions_app:end_session' booking_ref=r.booking_reference %}" class="btn-ev-pill btn-ev-success btn-sm">
+                                    Record Meter End
+                                </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="ev-card p-5 text-center">
+            <div class="fs-1 mb-2">📅</div>
+            <h2 class="h5 font-display fw-bold mb-2">No Incoming Reservations Yet</h2>
+            <p class="text-muted small mb-4">When drivers traveling the corridor book your chargers, reservations will show up here.</p>
+            <a href="{% url 'chargers:host_list' %}" class="btn-ev-pill btn-ev-primary">Review Your Listings</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

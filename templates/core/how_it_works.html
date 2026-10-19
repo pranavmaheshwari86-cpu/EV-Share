@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 900px;">
+  <div class="text-center mb-5">
+    <span class="text-uppercase small fw-bold text-primary">Operating Guide</span>
+    <h1 class="fw-semibold">How EV Share Operates</h1>
+    <p class="lead text-muted">A clear, step-by-step walkthrough for both EV drivers and charger hosts.</p>
+  </div>
+
+  <div class="row g-4 mb-5">
+    <div class="col-md-6">
+      <div class="p-4 bg-white rounded-4 shadow-sm border h-100">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <span class="badge bg-primary text-white rounded-pill px-3 py-1">For Drivers</span>
+          <h4 class="mb-0 fw-semibold">Finding & Booking</h4>
+        </div>
+        <ol class="text-muted small ps-3 mb-0 d-flex flex-column gap-3">
+          <li><strong>Search the Corridor:</strong> Browse the Yamuna Expressway corridor map or filter by your car's connector type (CCS2, Type 2, 15A Socket).</li>
+          <li><strong>Inspect Charger Specs:</strong> Check rated power output (e.g. 7.4 kW AC or 60 kW DC), pricing per kWh, host category, and available amenities.</li>
+          <li><strong>Select a Slot & Instant Book:</strong> Pick an open 1-hour time window. The server locks the slot atomically, preventing any conflicting reservation.</li>
+          <li><strong>Review Directions:</strong> Once confirmed, unlock the host's private arrival instructions and gate code.</li>
+          <li><strong>Charge & Rate:</strong> Arrive, record the session start/end meter readings with the host, and leave feedback.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="p-4 bg-white rounded-4 shadow-sm border h-100">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <span class="badge bg-success text-white rounded-pill px-3 py-1">For Hosts</span>
+          <h4 class="mb-0 fw-semibold">Sharing & Earning</h4>
+        </div>
+        <ol class="text-muted small ps-3 mb-0 d-flex flex-column gap-3">
+          <li><strong>Submit Verification:</strong> Complete a simple KYC application with ID proof, property ownership/access declaration, and charger details.</li>
+          <li><strong>Administrative Review:</strong> Platform administrators review your submission for safety and corridor relevance.</li>
+          <li><strong>Set Pricing & Schedule:</strong> Define your price per kWh, weekly available hours, and any blackout dates.</li>
+          <li><strong>Accept Reservations:</strong> Drivers book pre-approved slots instantly within your configured hours.</li>
+          <li><strong>Record Visit & Track Balance:</strong> Check in the driver, record meter readings upon departure, and review your earnings breakdown.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="text-center">
+    <a href="{% url 'chargers:search' %}" class="btn btn-primary px-4 me-2">Explore Available Chargers</a>
+    <a href="{% url 'accounts:host_onboarding' %}" class="btn btn-secondary px-4">Register as a Host</a>
+  </div>
+</div>
+{% endblock %}

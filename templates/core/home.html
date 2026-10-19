@@ -1,0 +1,222 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="py-5" style="background: radial-gradient(circle at 50% 20%, #FFFFFF 0%, #F5F5F7 80%); border-bottom: 1px solid var(--color-border);">
+  <div class="container text-center py-4" style="max-width: 820px;">
+    <span class="evs-badge evs-badge-verified mb-3">Delhi – Agra Yamuna Expressway Pilot</span>
+    <h1 class="display-4 fw-semibold text-dark mb-3">Your Charger.<br>Someone Else’s Journey.<br>Everyone Benefits.</h1>
+    <p class="lead text-muted mb-4">Discover verified private and commercial EV chargers along high-demand highway travel corridors. Instant booking, transparent pricing, and zero double-booking uncertainty.</p>
+    
+    <!-- Quick Search Bar -->
+    <form action="{% url 'chargers:search' %}" method="GET" class="p-2 bg-white shadow-sm d-flex flex-column flex-sm-row gap-2 mb-4" style="border-radius: var(--radius-pill); border: 1px solid var(--color-border);">
+      <div class="flex-grow-1 px-3 d-flex align-items-center">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-muted me-2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" name="q" class="form-control border-0 p-0 shadow-none" placeholder="Search Noida, Jewar, Mathura, Agra..." style="font-size: 0.95rem;">
+      </div>
+      <div class="d-flex gap-2">
+        <select name="connector" class="form-select border-0 shadow-none bg-light" style="border-radius: var(--radius-pill); font-size: 0.85rem; width: auto;">
+          <option value="">All Connectors</option>
+          <option value="CCS2">CCS2 (DC Fast)</option>
+          <option value="Type 2">Type 2 (AC)</option>
+          <option value="15A 3-Pin">15A Socket</option>
+        </select>
+        <button type="submit" class="btn btn-primary px-4">Find Charger</button>
+      </div>
+    </form>
+
+    <div class="d-flex justify-content-center gap-3">
+      <a href="{% url 'chargers:search' %}" class="btn btn-secondary">Explore All Corridor Nodes</a>
+      <a href="{% url 'accounts:host_onboarding' %}" class="btn btn-outline-dark" style="border-radius: var(--radius-pill);">List Your Charger</a>
+    </div>
+  </div>
+</section>
+
+<!-- Corridor Highway Overview -->
+<section class="py-5">
+  <div class="container" style="max-width: var(--container-max);">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center mb-4">
+      <div>
+        <span class="text-uppercase small fw-bold text-primary">Active Travel Corridor</span>
+        <h2 class="h3 fw-semibold mb-1">Yamuna Expressway Pilot Waypoints</h2>
+        <p class="text-muted small mb-0">High-speed expressway connecting Delhi NCR to Agra (165 km). Verified chargers situated at rest stops, hotels, and gated premises.</p>
+      </div>
+      <a href="{% url 'chargers:search' %}" class="btn btn-secondary btn-sm mt-3 mt-md-0">View Interactive Map →</a>
+    </div>
+
+    <!-- Featured Verified Listings -->
+    <div class="row g-4">
+      {% if featured_chargers %}
+        {% for charger in featured_chargers %}
+          <div class="col-md-6 col-lg-4">
+            <div class="evs-card h-100 d-flex flex-column">
+              <div class="position-relative" style="height: 180px; background-color: #E5E5EA; overflow: hidden;">
+                {% if charger.photos %}
+                  <img src="{% static charger.photos.0 %}" alt="{{ charger.title }}" class="w-100 h-100" style="object-fit: cover;" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=600&auto=format&fit=crop&q=80';">
+                {% else %}
+                  <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted" style="background: linear-gradient(135deg, #E0E0E0 0%, #F5F5F7 100%);">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                  </div>
+                {% endif %}
+                <div class="position-absolute top-0 end-0 m-2">
+                  <span class="evs-badge evs-badge-verified">Verified</span>
+                </div>
+                <div class="position-absolute bottom-0 start-0 m-2">
+                  <span class="evs-badge {% if charger.charger_type == 'DC' %}evs-badge-dc{% else %}evs-badge-ac{% endif %}">
+                    {{ charger.power_output_kw }} kW {{ charger.charger_type }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="evs-card-body d-flex flex-column flex-grow-1">
+                <div class="d-flex justify-content-between align-items-baseline mb-1">
+                  <h5 class="fw-semibold text-truncate mb-0" title="{{ charger.title }}">{{ charger.title }}</h5>
+                  <div class="fw-bold text-dark fs-6 text-nowrap">₹{{ charger.price_per_kwh|floatformat:1 }} <span class="small text-muted fw-normal">/kWh</span></div>
+                </div>
+                <p class="small text-muted mb-2 text-truncate">📍 {{ charger.address.display_address }}, {{ charger.address.city }}</p>
+                
+                <div class="d-flex flex-wrap gap-1 mb-3">
+                  {% for conn in charger.connector_types %}
+                    <span class="badge bg-light text-dark border small">{{ conn }}</span>
+                  {% endfor %}
+                </div>
+
+                <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                  <span class="small text-muted">
+                    {% if charger.reviews_count > 0 %}
+                      ★ {{ charger.average_rating }} ({{ charger.reviews_count }})
+                    {% else %}
+                      ★ New listing
+                    {% endif %}
+                  </span>
+                  <a href="{% url 'chargers:detail' charger_id=charger.id %}" class="btn btn-secondary btn-sm">Inspect & Book</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="col-12">
+          <div class="evs-card p-5 text-center">
+            <h5 class="fw-semibold">No chargers listed yet</h5>
+            <p class="text-muted">Seed pilot corridor data to explore verified listings.</p>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="py-5" style="background-color: #FFFFFF; border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border);">
+  <div class="container" style="max-width: var(--container-max);">
+    <div class="text-center mb-5" style="max-width: 650px; margin: 0 auto;">
+      <span class="text-uppercase small fw-bold text-primary">Simple & Reliable</span>
+      <h2 class="fw-semibold">How EV Share Works</h2>
+      <p class="text-muted">A structured peer-to-peer charging marketplace built around verified hosts and dependable reservations.</p>
+    </div>
+
+    <div class="row g-4 text-center">
+      <div class="col-md-4">
+        <div class="p-4 rounded-4 h-100" style="background: var(--color-canvas);">
+          <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-white shadow-sm" style="width: 56px; height: 56px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0071E3" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          </div>
+          <h4 class="fw-semibold">1. Discover Compatible Nodes</h4>
+          <p class="small text-muted">Filter highway corridor listings by your vehicle connector (CCS2, Type 2), charging speed, price, and schedule.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-4 rounded-4 h-100" style="background: var(--color-canvas);">
+          <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-white shadow-sm" style="width: 56px; height: 56px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0071E3" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+          </div>
+          <h4 class="fw-semibold">2. Instant Slot Reservation</h4>
+          <p class="small text-muted">Select an available 1-hour slot. Our atomic concurrency engine locks the slot immediately, preventing double booking.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="p-4 rounded-4 h-100" style="background: var(--color-canvas);">
+          <div class="rounded-circle d-inline-flex align-items-center justify-content-center mb-3 bg-white shadow-sm" style="width: 56px; height: 56px;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0071E3" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          </div>
+          <h4 class="fw-semibold">3. Charge & Track Visit</h4>
+          <p class="small text-muted">Receive exact private directions upon confirmation. Arrive, plug in, track visit start/end, and record feedback.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust, Safety & Address Privacy Callout -->
+<section class="py-5">
+  <div class="container" style="max-width: var(--container-max);">
+    <div class="row align-items-center g-5">
+      <div class="col-lg-6">
+        <span class="text-uppercase small fw-bold text-success">Safety & Trust First</span>
+        <h2 class="fw-semibold mb-3">Designed with Strict Host Privacy & Rigorous Verification</h2>
+        <p class="text-muted mb-3">Unlike unmoderated map apps, every EV Share host must submit identity proofs and property permissions reviewed by administrators before their listing can accept drivers.</p>
+        <ul class="list-unstyled d-flex flex-column gap-2 mb-4">
+          <li class="d-flex align-items-center gap-2 small text-dark">
+            <span class="text-success">✓</span> <strong>Protected Private Addresses:</strong> Exact residential addresses and gate codes are revealed only to confirmed drivers.
+          </li>
+          <li class="d-flex align-items-center gap-2 small text-dark">
+            <span class="text-success">✓</span> <strong>Atomic Anti-Collision Locking:</strong> Database constraints prevent overlapping bookings on exclusive chargers.
+          </li>
+          <li class="d-flex align-items-center gap-2 small text-dark">
+            <span class="text-success">✓</span> <strong>Clear Telemetry Reality:</strong> Charging visits are transparently marked as manual host entries without fabricated hardware claims.
+          </li>
+        </ul>
+        <a href="{% url 'safety' %}" class="btn btn-secondary">Read Safety Standards</a>
+      </div>
+      <div class="col-lg-6">
+        <div class="p-4 bg-white rounded-4 shadow-sm border">
+          <h5 class="fw-semibold mb-3">Frequently Asked Questions</h5>
+          <div class="accordion accordion-flush" id="faqAccordion">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed px-0 fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                  How does the pilot corridor work?
+                </button>
+              </h2>
+              <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body px-0 text-muted small">
+                  The initial pilot concentrates charging nodes along the Yamuna Expressway (connecting Greater Noida to Agra). This ensures meaningful charging density for traveling EV drivers rather than scattered chargers across the country.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed px-0 fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                  How are prices calculated?
+                </button>
+              </h2>
+              <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body px-0 text-muted small">
+                  Hosts set a per-kWh rate. The server estimates energy consumption based on charger capacity and duration, adding an illustrative 15% platform commission and applicable GST. An immutable price snapshot is locked in at booking confirmation.
+                </div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed px-0 fw-medium" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                  Are payments live or simulated?
+                </button>
+              </h2>
+              <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                <div class="accordion-body px-0 text-muted small">
+                  For the MVP demonstration, payments use a sandboxed simulator. Transactions reflect realistic invoices, commission splits, and refund states without collecting real card numbers.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

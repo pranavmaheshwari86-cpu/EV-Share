@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 800px;">
+  <span class="text-uppercase small fw-bold text-primary">Fair Play</span>
+  <h1 class="fw-semibold mb-4">Cancellation & Refund Policy</h1>
+
+  <div class="p-4 bg-white rounded-4 shadow-sm border mb-4 text-muted small">
+    <h5 class="fw-semibold text-dark mb-2">1. Driver Cancellation Window</h5>
+    <p>Drivers may cancel any confirmed booking prior to the scheduled slot start time without penalty. When cancelled, the reservation is released immediately, allowing another traveler along the corridor to claim the slot.</p>
+
+    <h5 class="fw-semibold text-dark mb-2">2. Immediate Slot Lock Release</h5>
+    <p>Cancelling a booking automatically deletes the associated atomic slot lock in the database, restoring genuine real-time capacity to the marketplace.</p>
+
+    <h5 class="fw-semibold text-dark mb-2">3. Refund Processing</h5>
+    <p>In this pilot demonstration, any simulated payment for a cancelled booking is instantly transitioned to a <code>refunded</code> status in your billing history.</p>
+
+    <h5 class="fw-semibold text-dark mb-2">4. Host Cancellation Rules</h5>
+    <p>Hosts may only cancel a reservation due to documented technical power failure, maintenance, or property emergencies. Frequent cancellations without cause result in temporary suspension of the host listing.</p>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,214 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4" style="max-width: var(--container-max);">
+  <!-- Search & Filter Controls -->
+  <div class="p-3 bg-white rounded-4 shadow-sm border mb-4">
+    <form method="GET" action="{% url 'chargers:search' %}" class="row g-2 align-items-center">
+      <div class="col-lg-3 col-md-6">
+        <div class="input-group input-group-sm">
+          <span class="input-group-text bg-light border-end-0">🔍</span>
+          <input type="text" name="q" class="form-control border-start-0" placeholder="Search waypoint..." value="{{ query }}">
+        </div>
+      </div>
+
+      <div class="col-lg-2 col-md-3 col-6">
+        <select name="connector" class="form-select form-select-sm">
+          <option value="">Any Connector</option>
+          <option value="CCS2" {% if selected_connector == 'CCS2' %}selected{% endif %}>CCS2 (DC Fast)</option>
+          <option value="Type 2" {% if selected_connector == 'Type 2' %}selected{% endif %}>Type 2 (AC)</option>
+          <option value="GB/T" {% if selected_connector == 'GB/T' %}selected{% endif %}>GB/T</option>
+          <option value="15A 3-Pin" {% if selected_connector == '15A 3-Pin' %}selected{% endif %}>15A Socket</option>
+        </select>
+      </div>
+
+      <div class="col-lg-2 col-md-3 col-6">
+        <select name="type" class="form-select form-select-sm">
+          <option value="">AC & DC</option>
+          <option value="AC" {% if selected_type == 'AC' %}selected{% endif %}>AC Only</option>
+          <option value="DC" {% if selected_type == 'DC' %}selected{% endif %}>DC Fast Only</option>
+        </select>
+      </div>
+
+      <div class="col-lg-2 col-md-3 col-6">
+        <select name="min_power" class="form-select form-select-sm">
+          <option value="">Any Power</option>
+          <option value="7" {% if selected_min_power == '7' %}selected{% endif %}>≥ 7 kW</option>
+          <option value="22" {% if selected_min_power == '22' %}selected{% endif %}>≥ 22 kW</option>
+          <option value="50" {% if selected_min_power == '50' %}selected{% endif %}>≥ 50 kW</option>
+        </select>
+      </div>
+
+      <div class="col-lg-2 col-md-3 col-6">
+        <select name="max_price" class="form-select form-select-sm">
+          <option value="">Any Price</option>
+          <option value="15" {% if selected_max_price == '15' %}selected{% endif %}>≤ ₹15/kWh</option>
+          <option value="20" {% if selected_max_price == '20' %}selected{% endif %}>≤ ₹20/kWh</option>
+          <option value="25" {% if selected_max_price == '25' %}selected{% endif %}>≤ ₹25/kWh</option>
+        </select>
+      </div>
+
+      <div class="col-lg-1 col-md-12 text-end">
+        <button type="submit" class="btn btn-primary btn-sm w-100">Filter</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Interactive Map & Grid Container -->
+  <div class="row g-4">
+    <!-- Left: Leaflet Corridor Map -->
+    <div class="col-lg-6">
+      <div class="position-sticky" style="top: 80px;">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <span class="small fw-semibold text-dark">Yamuna Expressway Travel Corridor Map</span>
+          <span class="badge bg-light text-muted border">{{ results_count }} verified node(s)</span>
+        </div>
+        <div id="corridor-map"></div>
+        <div class="small text-muted mt-2 d-flex justify-content-between">
+          <span>Pins denote verified charging hubs along the corridor.</span>
+          <button id="btn-geolocate" class="btn btn-link btn-sm p-0 text-decoration-none" style="font-size: 0.8rem;">📍 Use My Location</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Charger Cards -->
+    <div class="col-lg-6">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="fw-semibold mb-0">Charger Listings</h5>
+        <span class="small text-muted">Showing {{ results_count }} available</span>
+      </div>
+
+      {% if results %}
+        <div class="d-flex flex-column gap-3">
+          {% for r in results %}
+            {% with c=r.charger %}
+              <div class="evs-card">
+                <div class="row g-0">
+                  <div class="col-sm-4 position-relative" style="min-height: 140px; background-color: #E5E5EA;">
+                    {% if c.photos %}
+                      <img src="{% static c.photos.0 %}" alt="{{ c.title }}" class="w-100 h-100" style="object-fit: cover;" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=500&auto=format&fit=crop&q=80';">
+                    {% else %}
+                      <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted" style="background: linear-gradient(135deg, #EAEAEA 0%, #D8D8DC 100%);">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
+                      </div>
+                    {% endif %}
+                    <span class="position-absolute top-0 start-0 m-2 evs-badge {% if c.charger_type == 'DC' %}evs-badge-dc{% else %}evs-badge-ac{% endif %}">
+                      {{ c.power_output_kw }} kW
+                    </span>
+                  </div>
+
+                  <div class="col-sm-8 p-3 d-flex flex-column">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                      <h6 class="fw-semibold mb-0 text-truncate" title="{{ c.title }}">
+                        <a href="{% url 'chargers:detail' charger_id=c.id %}" class="text-dark text-decoration-none">{{ c.title }}</a>
+                      </h6>
+                      <div class="fw-bold text-dark fs-6 text-nowrap">₹{{ c.price_per_kwh|floatformat:1 }} <small class="text-muted fw-normal">/kWh</small></div>
+                    </div>
+
+                    <p class="small text-muted mb-2 text-truncate">📍 {{ c.address.display_address }}, {{ c.address.city }}</p>
+
+                    <div class="d-flex flex-wrap gap-1 mb-2">
+                      {% for conn in c.connector_types %}
+                        <span class="badge bg-light text-dark border" style="font-size: 0.75rem;">{{ conn }}</span>
+                      {% endfor %}
+                      <span class="evs-badge evs-badge-verified" style="font-size: 0.65rem;">Verified</span>
+                    </div>
+
+                    <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                      <div class="small text-muted">
+                        {% if r.distance_km is not None %}
+                          <span class="text-primary fw-medium">{{ r.distance_km }} km away</span> &bull; 
+                        {% endif %}
+                        <span>★ {{ c.average_rating|default:"New" }}</span>
+                      </div>
+                      <a href="{% url 'chargers:detail' charger_id=c.id %}" class="btn btn-primary btn-sm">Reserve Slot</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            {% endwith %}
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="evs-card p-5 text-center">
+          <h5 class="fw-semibold mb-1">No chargers matching criteria</h5>
+          <p class="text-muted small mb-3">Try clearing connector or pricing filters to view all available nodes along the corridor.</p>
+          <a href="{% url 'chargers:search' %}" class="btn btn-secondary btn-sm">Reset All Filters</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const mapElement = document.getElementById('corridor-map');
+  if (!mapElement) return;
+
+  const markersData = {{ markers_json|safe }};
+  const centerLat = {{ corridor_center.lat }};
+  const centerLng = {{ corridor_center.lng }};
+
+  const map = L.map('corridor-map').setView([centerLat, centerLng], 9);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map);
+
+  const markerBounds = [];
+
+  markersData.forEach(function(m) {
+    if (m.lat && m.lng) {
+      const isDC = m.type === 'DC';
+      const markerColor = isDC ? '#7B1FA2' : '#0071E3';
+
+      const circleMarker = L.circleMarker([m.lat, m.lng], {
+        radius: 8,
+        fillColor: markerColor,
+        color: '#FFFFFF',
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 0.9
+      }).addTo(map);
+
+      const popupContent = `
+        <div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; min-width: 170px;">
+          <strong style="font-size: 13px; color: #1D1D1F;">${m.title}</strong><br>
+          <span style="font-size: 11px; color: #6E6E73;">${m.city} &bull; ${m.power} kW (${m.type})</span><br>
+          <span style="font-size: 12px; font-weight: 600; color: #0071E3;">₹${m.price}/kWh</span><br>
+          <a href="${m.url}" style="display: inline-block; margin-top: 6px; font-size: 11px; color: #0071E3; font-weight: 600; text-decoration: none;">View Details →</a>
+        </div>
+      `;
+      circleMarker.bindPopup(popupContent);
+      markerBounds.push([m.lat, m.lng]);
+    }
+  });
+
+  if (markerBounds.length > 0) {
+    map.fitBounds(markerBounds, { padding: [30, 30], maxZoom: 12 });
+  }
+
+  // Geolocation trigger
+  const geoBtn = document.getElementById('btn-geolocate');
+  if (geoBtn && navigator.geolocation) {
+    geoBtn.addEventListener('click', function() {
+      geoBtn.textContent = 'Locating...';
+      navigator.geolocation.getCurrentPosition(
+        function(pos) {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+          window.location.href = `{% url 'chargers:search' %}?lat=${lat}&lng=${lng}`;
+        },
+        function(err) {
+          alert('Location permission denied or unavailable. You can search by entering a city name.');
+          geoBtn.textContent = '📍 Use My Location';
+        }
+      );
+    });
+  }
+});
+</script>
+{% endblock %}

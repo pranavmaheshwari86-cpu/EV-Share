@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}My Support Tickets — EV Share{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <h1 class="h3 font-display fw-bold mb-1">My Support Tickets</h1>
+            <p class="text-muted small mb-0">Review status updates and resolution records for inquiries and disputes.</p>
+        </div>
+        <a href="{% url 'support:create' %}" class="btn-ev-pill btn-ev-primary btn-sm">+ Open New Ticket</a>
+    </div>
+
+    {% if tickets %}
+        <div class="row g-3">
+            {% for t in tickets %}
+            <div class="col-12">
+                <div class="ev-card p-4 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+                    <div>
+                        <div class="d-flex align-items-center gap-2 mb-2">
+                            <span class="fw-bold font-monospace text-dark">{{ t.ticket_id }}</span>
+                            {% if t.status == 'resolved' %}
+                                <span class="ev-badge ev-badge-success">Resolved</span>
+                            {% elif t.status == 'in_progress' %}
+                                <span class="ev-badge ev-badge-warning">In Progress</span>
+                            {% else %}
+                                <span class="ev-badge ev-badge-neutral">{{ t.status|title }}</span>
+                            {% endif %}
+                            <span class="text-muted small">• Opened on {{ t.created_at|date:"d M Y, H:i" }}</span>
+                        </div>
+
+                        <h2 class="h5 font-display fw-bold mb-1">
+                            <a href="{% url 'support:detail' ticket_id=t.ticket_id %}" class="text-decoration-none text-dark">
+                                {{ t.subject }}
+                            </a>
+                        </h2>
+                        <div class="text-muted small">
+                            Category: <span class="text-dark fw-semibold">{{ t.category|title }}</span>
+                            {% if t.related_booking %}
+                                • Related Booking: <span class="font-monospace text-dark">#{{ t.related_booking.booking_reference }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div>
+                        <a href="{% url 'support:detail' ticket_id=t.ticket_id %}" class="btn-ev-pill btn-ev-secondary btn-sm">
+                            View Ticket & Response →
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="ev-card p-5 text-center">
+            <div class="fs-1 mb-2">💬</div>
+            <h2 class="h5 font-display fw-bold mb-2">No Active Tickets</h2>
+            <p class="text-muted small mb-4">You currently have no open support requests or reported grievances.</p>
+            <a href="{% url 'support:create' %}" class="btn-ev-pill btn-ev-primary">Contact Support</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

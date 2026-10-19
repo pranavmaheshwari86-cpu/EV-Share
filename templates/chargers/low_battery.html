@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}Low-Battery Assistance — Rapid Corridor Discovery — EV Share{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <!-- Urgent Alert Banner -->
+    <div class="ev-card p-4 mb-4 border-warning bg-light">
+        <div class="d-flex align-items-center gap-3">
+            <div class="rounded-circle p-3 bg-warning bg-opacity-25 text-warning-emphasis fs-4">
+                ⚡
+            </div>
+            <div>
+                <h1 class="h4 font-display fw-bold mb-1 text-danger-emphasis">Urgent Low-Battery Assistance Mode</h1>
+                <p class="text-muted mb-0 small">
+                    Yamuna Expressway Corridor Priority Queue. Filtered for high-power chargers with active verification and immediate slot availability within 60 km.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Corridor Quick Select -->
+    <div class="ev-card p-3 mb-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+            <span class="small fw-semibold text-muted">Nearest Expressway Milestone:</span>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="?lat=28.4744&lng=77.5040" class="btn-ev-pill btn-ev-secondary btn-sm">Greater Noida (Zero Point)</a>
+                <a href="?lat=28.1287&lng=77.5562" class="btn-ev-pill btn-ev-secondary btn-sm">Jewar Toll Plaza (KM 38)</a>
+                <a href="?lat=27.6042&lng=77.6250" class="btn-ev-pill btn-ev-secondary btn-sm">Mathura Interchange (KM 108)</a>
+                <a href="?lat=27.2185&lng=77.9940" class="btn-ev-pill btn-ev-secondary btn-sm">Agra End Point (KM 165)</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Nearest Bookable Chargers List -->
+    <div class="row g-4">
+        {% if results %}
+            {% for item in results %}
+                {% with c=item.charger %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="ev-card h-100 p-4 d-flex flex-column justify-content-between position-relative border-top border-4 {% if forloop.first %}border-danger{% else %}border-primary{% endif %}">
+                        <div>
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="ev-badge ev-badge-success">{{ c.charger_type }} • {{ c.power_output_kw }} kW</span>
+                                {% if item.distance_km %}
+                                    <span class="badge bg-danger-subtle text-danger-emphasis fw-bold rounded-pill px-3 py-1">
+                                        {{ item.distance_km }} km away
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            <h2 class="h5 font-display fw-bold mb-2">
+                                <a href="{% url 'chargers:detail' charger_id=c.id %}" class="text-decoration-none text-dark">
+                                    {{ c.title }}
+                                </a>
+                            </h2>
+
+                            <p class="text-muted small mb-3">
+                                📍 {{ c.address.city }} — {{ c.address.display_address }}
+                            </p>
+
+                            <div class="bg-light p-2 rounded-3 mb-3 small">
+                                <div class="d-flex justify-content-between text-muted mb-1">
+                                    <span>Connectors:</span>
+                                    <span class="fw-semibold text-dark">{{ c.connector_types|join:", " }}</span>
+                                </div>
+                                <div class="d-flex justify-content-between text-muted">
+                                    <span>Tariff:</span>
+                                    <span class="fw-semibold text-dark">₹{{ c.price_per_kwh|floatformat:2 }} / kWh</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <a href="{% url 'chargers:detail' charger_id=c.id %}" class="btn-ev-pill btn-ev-primary w-100 fw-bold">
+                                Reserve Next Available Slot →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endwith %}
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="ev-card p-5 text-center">
+                    <p class="text-muted fs-5 mb-3">No immediate chargers found within 60 km of this milestone.</p>
+                    <a href="{% url 'chargers:search' %}" class="btn-ev-pill btn-ev-primary">Browse Full Expressway Corridor Map</a>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

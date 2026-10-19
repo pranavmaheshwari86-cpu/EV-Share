@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 920px;">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <span class="text-uppercase small fw-bold text-primary">Driver & Host Profile</span>
+      <h1 class="h2 fw-semibold mb-0">{{ user.full_name }}</h1>
+      <p class="text-muted small mb-0">{{ user.email }} &bull; Member since {{ user.created_at|date:"M Y" }}</p>
+    </div>
+    <div class="d-flex gap-2">
+      {% if user.is_verified_host %}
+        <span class="evs-badge evs-badge-verified">Verified Host</span>
+      {% elif 'host' in user.roles %}
+        <span class="evs-badge evs-badge-pending">Host KYC Pending</span>
+      {% endif %}
+      <span class="badge bg-light text-dark border">Driver</span>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Account Information -->
+    <div class="col-lg-5">
+      <div class="p-4 bg-white rounded-4 shadow-sm border mb-4">
+        <h5 class="fw-semibold mb-3">Account Details</h5>
+        <form method="POST" action="{% url 'accounts:profile' %}">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="update_profile">
+
+          <div class="mb-3">
+            <label class="form-label" for="full_name">Full Name</label>
+            <input type="text" name="full_name" id="full_name" class="form-control" value="{{ user.full_name }}" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="email">Email</label>
+            <input type="text" id="email" class="form-control bg-light" value="{{ user.email }}" disabled>
+            <small class="text-muted">Email cannot be changed directly.</small>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="phone_number">Phone Number</label>
+            <input type="tel" name="phone_number" id="phone_number" class="form-control" value="{{ user.phone_number|default:'' }}" placeholder="+91 98765 43210">
+          </div>
+
+          <button type="submit" class="btn btn-secondary btn-sm w-100">Save Changes</button>
+        </form>
+      </div>
+
+      <!-- Host Role Management -->
+      <div class="p-4 bg-white rounded-4 shadow-sm border">
+        <h5 class="fw-semibold mb-2">Host Status</h5>
+        {% if 'host' in user.roles %}
+          <p class="small text-muted mb-3">You have host capabilities enabled. List chargers, configure availability, and manage reservations.</p>
+          {% if host_verification %}
+            <div class="p-2 mb-3 bg-light rounded-3 small">
+              <strong>KYC Status:</strong> <span class="text-uppercase fw-bold">{{ host_verification.status }}</span>
+              {% if host_verification.admin_notes %}
+                <div class="text-muted mt-1">Admin Note: {{ host_verification.admin_notes }}</div>
+              {% endif %}
+            </div>
+            <a href="{% url 'accounts:host_onboarding' %}" class="btn btn-secondary btn-sm w-100 mb-2">View KYC Application</a>
+          {% else %}
+            <a href="{% url 'accounts:host_onboarding' %}" class="btn btn-primary btn-sm w-100 mb-2">Complete Host KYC</a>
+          {% endif %}
+          <a href="{% url 'chargers:host_list' %}" class="btn btn-outline-dark btn-sm w-100 mb-2">Go to Host Workspace</a>
+        {% else %}
+          <p class="small text-muted mb-3">Own a home wallbox, parking facility, or commercial plug? Share it with corridor drivers.</p>
+          <form method="POST" action="{% url 'accounts:profile' %}">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="toggle_host_role">
+            <button type="submit" class="btn btn-primary btn-sm w-100">Enable Host Mode</button>
+          </form>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Vehicles in Garage -->
+    <div class="col-lg-7">
+      <div class="p-4 bg-white rounded-4 shadow-sm border">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-semibold mb-0">My EV Garage</h5>
+          <span class="badge bg-light text-muted border">{{ user.vehicles|length }} Vehicle(s)</span>
+        </div>
+        <p class="small text-muted">Adding your vehicle enables automatic connector compatibility checking during charger discovery.</p>
+
+        {% if user.vehicles %}
+          <div class="list-group mb-4">
+            {% for v in user.vehicles %}
+              <div class="list-group-item d-flex justify-content-between align-items-center py-3 border rounded-3 mb-2">
+                <div>
+                  <h6 class="fw-semibold mb-1">{{ v.make }} {{ v.model }}</h6>
+                  <div class="small text-muted">
+                    <span class="badge bg-secondary me-2">{{ v.connector_type }}</span>
+                    <span>Reg: {{ v.registration_number }}</span> &bull; 
+                    <span>Battery: {{ v.battery_capacity_kwh }} kWh</span>
+                  </div>
+                </div>
+                <span class="text-success small fw-medium">Active</span>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="p-4 bg-light rounded-3 text-center mb-4">
+            <p class="small text-muted mb-0">No vehicles in your garage yet. Add one below for automatic compatibility matching.</p>
+          </div>
+        {% endif %}
+
+        <h6 class="fw-semibold mb-3">Add a Vehicle</h6>
+        <form method="POST" action="{% url 'accounts:profile' %}">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="add_vehicle">
+
+          <div class="row g-2 mb-2">
+            <div class="col-6">
+              <label class="form-label" for="make">Make</label>
+              <input type="text" name="make" id="make" class="form-control" placeholder="e.g. Tata, MG, Mahindra" required>
+            </div>
+            <div class="col-6">
+              <label class="form-label" for="model">Model</label>
+              <input type="text" name="model" id="model" class="form-control" placeholder="e.g. Nexon EV, ZS EV" required>
+            </div>
+          </div>
+
+          <div class="row g-2 mb-3">
+            <div class="col-4">
+              <label class="form-label" for="registration_number">Reg Number</label>
+              <input type="text" name="registration_number" id="registration_number" class="form-control" placeholder="UP-16-AB-1234" required>
+            </div>
+            <div class="col-4">
+              <label class="form-label" for="connector_type">Port</label>
+              <select name="connector_type" id="connector_type" class="form-select" required>
+                <option value="CCS2">CCS2 (DC/AC)</option>
+                <option value="Type 2">Type 2 (AC)</option>
+                <option value="GB/T">GB/T</option>
+                <option value="15A 3-Pin">15A Indian 3-Pin</option>
+              </select>
+            </div>
+            <div class="col-4">
+              <label class="form-label" for="battery_capacity_kwh">Battery (kWh)</label>
+              <input type="number" step="0.1" name="battery_capacity_kwh" id="battery_capacity_kwh" class="form-control" value="30.0">
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-secondary btn-sm">+ Add Vehicle to Garage</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

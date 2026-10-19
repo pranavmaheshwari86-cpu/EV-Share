@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Review Charger — Booking {{ booking.booking_reference }} — EV Share{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-lg-6">
+        <div class="mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 text-muted small">
+                    <li class="breadcrumb-item"><a href="{% url 'bookings:detail' booking_ref=booking.booking_reference %}" class="text-decoration-none">Booking #{{ booking.booking_reference }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Write Review</li>
+                </ol>
+            </nav>
+            <h1 class="h3 font-display fw-bold mb-1">Share Your Charging Experience</h1>
+            <p class="text-muted small">Your verified feedback helps fellow EV drivers plan reliable stops on the Yamuna Expressway.</p>
+        </div>
+
+        <form method="POST" class="ev-card p-4 p-md-5 mb-4">
+            {% csrf_token %}
+
+            <div class="border-bottom pb-3 mb-4">
+                <h2 class="h6 font-display fw-bold mb-1">{{ booking.charger.title }}</h2>
+                <div class="text-muted small">
+                    Visit Date: <strong>{{ booking.slot_start|date:"D, d M Y" }}</strong> • 
+                    Host: <strong>{{ booking.host.first_name }} {{ booking.host.last_name }}</strong>
+                </div>
+            </div>
+
+            <!-- Rating Input (1 to 5 stars) -->
+            <div class="mb-4">
+                <label class="ev-form-label mb-2">Overall Satisfaction Rating <span class="text-danger">*</span></label>
+                <div class="d-flex gap-3">
+                    {% for score in "54321" %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="rating" id="star_{{ score }}" value="{{ score }}" {% if score == "5" %}checked{% endif %}>
+                        <label class="form-check-label fw-bold text-dark" for="star_{{ score }}">
+                            {{ score }} ★
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label for="comment" class="ev-form-label">Written Feedback / Access Tips</label>
+                <textarea class="form-control ev-form-control" id="comment" name="comment" rows="4" placeholder="How easy was driveway access? Did charging reach rated speed? Were amenities as described?" required></textarea>
+                <div class="form-text">Reviews from verified completed visits are immediately published to the charger's profile.</div>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{% url 'bookings:detail' booking_ref=booking.booking_reference %}" class="btn-ev-pill btn-ev-secondary">Cancel</a>
+                <button type="submit" class="btn-ev-pill btn-ev-primary px-4">Publish Verified Review</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

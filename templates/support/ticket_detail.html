@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+
+{% block title %}Ticket {{ ticket.ticket_id }} — EV Share Support{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+    <div class="col-lg-8">
+        <div class="mb-4">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 text-muted small">
+                    <li class="breadcrumb-item"><a href="{% url 'support:list' %}" class="text-decoration-none">Support Tickets</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ ticket.ticket_id }}</li>
+                </ol>
+            </nav>
+            <div class="d-flex align-items-center justify-content-between">
+                <div>
+                    <h1 class="h3 font-display fw-bold mb-0">Ticket #{{ ticket.ticket_id }}</h1>
+                    <span class="text-muted small">Submitted on {{ ticket.created_at|date:"d M Y, H:i" }} IST</span>
+                </div>
+                {% if ticket.status == 'resolved' %}
+                    <span class="ev-badge ev-badge-success">Resolved</span>
+                {% elif ticket.status == 'in_progress' %}
+                    <span class="ev-badge ev-badge-warning">In Progress</span>
+                {% else %}
+                    <span class="ev-badge ev-badge-neutral">{{ ticket.status|title }}</span>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="ev-card p-4 p-md-5 mb-4">
+            <div class="border-bottom pb-3 mb-4">
+                <h2 class="h5 font-display fw-bold mb-2">{{ ticket.subject }}</h2>
+                <div class="small text-muted">
+                    Category: <strong class="text-dark">{{ ticket.category|title }}</strong>
+                    {% if ticket.related_booking %}
+                        • Related Booking: <a href="{% url 'bookings:detail' booking_ref=ticket.related_booking.booking_reference %}" class="fw-bold font-monospace text-primary text-decoration-none">#{{ ticket.related_booking.booking_reference }}</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Original User Description -->
+            <div class="mb-4">
+                <h3 class="h6 font-display fw-semibold mb-2 text-muted">Original Case Description:</h3>
+                <div class="p-3 bg-light rounded-3 text-dark">
+                    {{ ticket.description|linebreaks }}
+                </div>
+            </div>
+
+            <!-- Resolution Notes if Resolved -->
+            {% if ticket.resolution_notes %}
+            <div class="border-top pt-4">
+                <div class="d-flex align-items-center gap-2 mb-2 text-success">
+                    <span>🛡️</span>
+                    <h3 class="h6 font-display fw-bold mb-0">Platform Operations Resolution</h3>
+                </div>
+                <div class="p-3 rounded-3 bg-success-subtle text-success-emphasis border border-success-subtle">
+                    <p class="mb-1">{{ ticket.resolution_notes }}</p>
+                    <div class="small opacity-75">Resolved by Administrator at {{ ticket.resolved_at|date:"d M Y, H:i" }} IST</div>
+                </div>
+            </div>
+            {% else %}
+            <div class="border-top pt-4 text-muted small">
+                <em>Our support specialists are investigating this inquiry. Updates will appear here.</em>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

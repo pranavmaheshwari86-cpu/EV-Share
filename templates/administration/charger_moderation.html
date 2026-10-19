@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+
+{% block title %}Charger Moderation — Admin — EV Share{% endblock %}
+
+{% block content %}
+<div class="py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 text-muted small">
+                    <li class="breadcrumb-item"><a href="{% url 'administration:dashboard' %}" class="text-decoration-none">Admin Portal</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Charger Moderation</li>
+                </ol>
+            </nav>
+            <h1 class="h3 font-display fw-bold mb-0">Charger Listing Moderation</h1>
+        </div>
+        <div class="btn-group" role="group">
+            <a href="?status=pending" class="btn btn-sm {% if current_filter == 'pending' %}btn-dark{% else %}btn-outline-dark{% endif %}">Pending</a>
+            <a href="?status=approved" class="btn btn-sm {% if current_filter == 'approved' %}btn-dark{% else %}btn-outline-dark{% endif %}">Approved</a>
+            <a href="?status=suspended" class="btn btn-sm {% if current_filter == 'suspended' %}btn-dark{% else %}btn-outline-dark{% endif %}">Suspended</a>
+            <a href="?status=all" class="btn btn-sm {% if current_filter == 'all' %}btn-dark{% else %}btn-outline-dark{% endif %}">All</a>
+        </div>
+    </div>
+
+    {% if chargers %}
+        <div class="row g-3">
+            {% for c in chargers %}
+            <div class="col-12">
+                <div class="ev-card p-4">
+                    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+                        <div>
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <h2 class="h5 font-display fw-bold mb-0">{{ c.title }}</h2>
+                                {% if c.verification_status == 'approved' %}
+                                    <span class="ev-badge ev-badge-success">Approved</span>
+                                {% elif c.verification_status == 'suspended' %}
+                                    <span class="ev-badge ev-badge-danger">Suspended</span>
+                                {% else %}
+                                    <span class="ev-badge ev-badge-warning">Pending Review</span>
+                                {% endif %}
+                                {% if not c.is_active %}
+                                    <span class="badge bg-secondary-subtle text-secondary-emphasis">Paused by Host</span>
+                                {% endif %}
+                            </div>
+                            <div class="text-muted small">
+                                Host: <strong>{{ c.host.first_name }} {{ c.host.last_name }}</strong> &lt;{{ c.host.email }}&gt; • Listed on {{ c.created_at|date:"d M Y" }}
+                            </div>
+                        </div>
+
+                        <!-- Moderation Controls -->
+                        <form method="POST" action="{% url 'administration:moderate_charger_action' charger_id=c.id %}" class="d-flex gap-2">
+                            {% csrf_token %}
+                            {% if c.verification_status != 'approved' %}
+                                <button type="submit" name="action" value="approve" class="btn-ev-pill btn-ev-success btn-sm">
+                                    ✓ Approve & Publish
+                                </button>
+                            {% endif %}
+                            {% if c.verification_status != 'rejected' and c.verification_status != 'suspended' %}
+                                <button type="submit" name="action" value="suspend" class="btn-ev-pill btn-ev-danger btn-sm">
+                                    Suspend Listing
+                                </button>
+                            {% endif %}
+                            <a href="{% url 'chargers:detail' charger_id=c.id %}" class="btn-ev-pill btn-ev-secondary btn-sm" target="_blank">
+                                Preview Public View ↗
+                            </a>
+                        </form>
+                    </div>
+
+                    <div class="bg-light p-3 rounded-3 small">
+                        <div class="row g-2 mb-2">
+                            <div class="col-md-3">
+                                <span class="text-muted d-block">Type & Power:</span>
+                                <strong class="text-dark">{{ c.charger_type }} • {{ c.power_output_kw }} kW</strong>
+                            </div>
+                            <div class="col-md-3">
+                                <span class="text-muted d-block">Connectors:</span>
+                                <strong class="text-dark">{{ c.connector_types|join:", " }}</strong>
+                            </div>
+                            <div class="col-md-3">
+                                <span class="text-muted d-block">Corridor Location:</span>
+                                <span class="text-dark">{{ c.address.city }} ({{ c.address.display_address }})</span>
+                            </div>
+                            <div class="col-md-3">
+                                <span class="text-muted d-block">Tariff:</span>
+                                <span class="text-primary fw-bold">₹{{ c.price_per_kwh|floatformat:2 }} / kWh</span>
+                            </div>
+                        </div>
+
+                        <div class="border-top pt-2 mt-2">
+                            <span class="text-muted">Private Driveway Directions:</span>
+                            <span class="text-dark ms-1">{{ c.address.private_directions|default:"None provided" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="ev-card p-5 text-center">
+            <div class="fs-1 mb-2">🔌</div>
+            <h2 class="h5 font-display fw-bold mb-1">No Chargers Found</h2>
+            <p class="text-muted small mb-0">No charger listings match the selected moderation filter.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

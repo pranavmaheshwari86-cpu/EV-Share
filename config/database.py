@@ -5,6 +5,7 @@ Falls back to mongomock if live server is unreachable in development.
 """
 import logging
 import os
+import sys
 import pymongo
 import mongoengine
 import mongomock
@@ -64,4 +65,15 @@ def connect_db():
         )
         _IS_MOCK_DB = True
         
+    # Auto-seed mock database if empty during web execution
+    if _IS_MOCK_DB and "pytest" not in sys.modules and not any("test" in arg for arg in sys.argv):
+        try:
+            from accounts.documents import User
+            if User.objects.count() == 0:
+                import seed_data
+                seed_data.seed_database()
+        except Exception as seed_exc:
+            logger.warning(f"[DB] Auto-seed failed: {seed_exc}")
+
     return _DB_CONNECTION
+

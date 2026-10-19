@@ -26,7 +26,9 @@ if sys.platform == 'win32' and hasattr(sys.stdout, 'reconfigure'):
 # Configure Django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 import django
-django.setup()
+from django.apps import apps
+if not apps.ready:
+    django.setup()
 
 from django.contrib.auth.hashers import make_password
 from accounts.documents import User, Vehicle, HostVerification

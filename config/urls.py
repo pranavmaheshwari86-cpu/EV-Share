@@ -5,6 +5,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 
+from django.views.generic import RedirectView
+
 urlpatterns = [
     path('', include('core.urls')),
     path('accounts/', include('accounts.urls')),
@@ -14,8 +16,8 @@ urlpatterns = [
     path('payments/', include('payments.urls')),
     path('reviews/', include('reviews.urls')),
     path('support/', include('support.urls')),
-    path('admin-portal/', include('administration.urls')),
     path('administration/', include('administration.urls')),
+    path('admin-portal/', RedirectView.as_view(url='/administration/', permanent=False)),
 ]
 
 if settings.DEBUG:

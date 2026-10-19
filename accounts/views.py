@@ -63,7 +63,7 @@ def login_view(request):
     if getattr(request, 'current_user', None):
         return redirect('home')
         
-    next_url = request.GET.get('next', 'home')
+    next_url = request.POST.get('next') or request.GET.get('next', '')
     
     if request.method == 'POST':
         email = request.POST.get('email', '').strip()

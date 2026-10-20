@@ -8,9 +8,14 @@ from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+REPO_DIR = BASE_DIR.parent
+FRONTEND_DIR = REPO_DIR / 'frontend'
 
-# Load environment variables from .env
-load_dotenv(BASE_DIR / '.env')
+# Load environment variables from backend/.env or root .env
+if (BASE_DIR / '.env').exists():
+    load_dotenv(BASE_DIR / '.env')
+elif (REPO_DIR / '.env').exists():
+    load_dotenv(REPO_DIR / '.env')
 
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'evshare-dev-secret-key-3.12-safe')
@@ -54,10 +59,12 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
+# Locate templates in frontend/templates/ (or backend/templates/ if co-located)
+TEMPLATE_DIRS = [FRONTEND_DIR / 'templates', BASE_DIR / 'templates']
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [p for p in TEMPLATE_DIRS if p.exists()],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -95,11 +102,10 @@ TIME_ZONE = 'Asia/Kolkata'
 USE_I18N = True
 USE_TZ = True
 
-# Static files (CSS, JavaScript, Images)
+# Static files (CSS, JavaScript, Images) located in frontend/static/
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+STATIC_DIRS = [FRONTEND_DIR / 'static', BASE_DIR / 'static']
+STATICFILES_DIRS = [p for p in STATIC_DIRS if p.exists()]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Media files for uploaded KYC and charger photos

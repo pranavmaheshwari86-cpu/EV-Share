@@ -23,6 +23,11 @@ if sys.platform == 'win32' and hasattr(sys.stdout, 'reconfigure'):
     except Exception:
         pass
 
+from pathlib import Path
+backend_dir = Path(__file__).resolve().parent
+if str(backend_dir) not in sys.path:
+    sys.path.insert(0, str(backend_dir))
+
 # Configure Django environment
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 import django

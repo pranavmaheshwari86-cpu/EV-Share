@@ -19,6 +19,7 @@ urlpatterns = [
     path('support/', include('support.urls')),
     path('administration/', include('administration.urls')),
     path('admin-portal/', RedirectView.as_view(url='/administration/', permanent=False)),
+    path('admin/', RedirectView.as_view(url='/administration/', permanent=False)),
 ]
 
 if settings.DEBUG:

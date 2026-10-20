@@ -5,3 +5,5 @@ python-dotenv>=1.0.0
 pillow>=10.0.0
 mongomock>=4.3.0
 pytest>=8.0.0
+gunicorn>=23.0.0
+whitenoise>=6.8.0

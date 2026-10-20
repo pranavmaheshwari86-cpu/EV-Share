@@ -60,43 +60,31 @@ EV Share/
 
 ## 4. Quick Start & Local Execution
 
-### Prerequisites
-- Python 3.10+ (Tested on Python 3.12.9)
-- Git
-
-### Step 1: Clone & Setup Virtual Environment
+### Option A: Local Python Environment
 ```bash
-# Navigate to project directory
-cd "c:/Users/Pranav/Desktop/EV Share"
-
-# Create and activate virtual environment (Windows PowerShell)
+# 1. Create and activate virtual environment (Windows PowerShell)
 python -m venv venv
 .\venv\Scripts\Activate.ps1
-```
 
-### Step 2: Install Dependencies
-```bash
+# 2. Install dependencies
 pip install -r requirements.txt
-```
 
-### Step 3: Configure Environment Variables
-Copy `.env.example` to `.env` (a working local `.env` is already pre-configured):
-```bash
+# 3. Configure environment
 copy .env.example .env
-```
 
-### Step 4: Seed Corridor Pilot Data
-Seed verified highway hosts, chargers, upcoming reservations, and admin accounts along the Yamuna Expressway:
-```bash
+# 4. Seed corridor pilot data
 python seed_data.py
-```
-*(Or run via Django management command: `python manage.py seed_corridor`)*
 
-### Step 5: Start Local Development Server
-```bash
+# 5. Start development server
 python manage.py runserver 8000
 ```
 Open **[http://127.0.0.1:8000/](http://127.0.0.1:8000/)** in your web browser.
+
+### Option B: Docker Compose (Full Stack with MongoDB)
+```bash
+docker-compose up --build
+```
+This boots both the EV Share Django web application (Gunicorn + WhiteNoise) and a dedicated MongoDB 7.0 database container with health checks.
 
 ---
 
@@ -117,20 +105,31 @@ Open **[http://127.0.0.1:8000/](http://127.0.0.1:8000/)** in your web browser.
 
 ## 6. Running Automated Tests
 
-Run the complete 21-test automated suite using `pytest`:
+Run the complete 25-test automated suite using `pytest`:
 
 ```bash
 venv\Scripts\pytest -v
 ```
 
 ### Test Coverage Highlights:
-- `tests/test_auth.py`: Registration, PBKDF2 authentication, duplicate email rejection, RBAC roles, signed session cookie resolution.
-- `tests/test_chargers.py`: Geospatial proximity sorting (Haversine formula), corridor milestone queries, connector filtering, vehicle compatibility matching.
-- `tests/test_bookings.py`: Atomic `SlotLock` creation, race condition double-booking rejection, host self-booking block, booking cancellation slot release.
-- `tests/test_payments.py`: Simulated transaction generation, platform commission (15%) & host payout (85%) split, authorization success/fail paths, simulated refunds.
-- `tests/test_security.py`: Unauthenticated route protection, address privacy enforcement, driver data isolation.
+- `tests/test_auth.py` (5 tests): Registration, PBKDF2 authentication, duplicate email rejection, RBAC roles, signed session cookie resolution.
+- `tests/test_chargers.py` (4 tests): Geospatial proximity sorting (Haversine formula), corridor milestone queries, connector filtering, vehicle compatibility matching.
+- `tests/test_bookings.py` (4 tests): Atomic `SlotLock` creation, race condition double-booking rejection, host self-booking block, booking cancellation slot release.
+- `tests/test_payments.py` (4 tests): Simulated transaction generation, platform commission (15%) & host payout (85%) split, authorization success/fail paths, simulated refunds.
+- `tests/test_security.py` (4 tests): Unauthenticated route protection, address privacy enforcement, driver data isolation.
+- `tests/test_sessions_and_reviews.py` (4 tests): Charging visit check-in/out, meter kWh delta calculation, driver reviews & rating recalculation, support ticket resolution, and JSON health check endpoint.
 
-**Result:** `21 passed in ~21s (100% pass rate)`.
+**Result:** `25 passed in ~39s (100% pass rate)`.
+
+---
+
+## 7. Production & Cloud Deployment Readiness
+
+- **Containerization:** Ready for Docker/Kubernetes with multi-stage [Dockerfile](file:///c:/Users/Pranav/Desktop/EV%20Share/Dockerfile) and [docker-compose.yml](file:///c:/Users/Pranav/Desktop/EV%20Share/docker-compose.yml).
+- **PaaS Deployment:** Ready for Railway / Render / Fly.io with [Procfile](file:///c:/Users/Pranav/Desktop/EV%20Share/Procfile).
+- **Static Assets:** Serves compressed and hashed static files via WhiteNoise (`whitenoise.middleware.WhiteNoiseMiddleware`).
+- **Health Check Endpoint:** `GET /health/` returns JSON platform and database readiness status for container orchestrators and load balancers.
+
 
 ---
 

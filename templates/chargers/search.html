@@ -154,11 +154,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const map = L.map('corridor-map').setView([centerLat, centerLng], 9);
 
-  // Carto Positron basemap (subdued roads, high-contrast Apple-quiet styling, no OSM 403 blocks)
-  const cartoPositron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    maxZoom: 19,
-    subdomains: 'abcd',
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>'
+  const tileUrl = "{{ MAP_TILE_URL|escapejs }}";
+  const tileAttr = '{{ MAP_TILE_ATTRIBUTION|safe }}';
+  const tileSubdomains = "{{ MAP_TILE_SUBDOMAINS|default:'abcd'|escapejs }}";
+  const tileMaxZoom = {{ MAP_TILE_MAX_ZOOM|default:19 }};
+
+  // Apple-quiet basemap (subdued roads, high-contrast Apple-quiet styling, no OSM 403 blocks)
+  const cartoPositron = L.tileLayer(tileUrl, {
+    maxZoom: tileMaxZoom,
+    subdomains: tileSubdomains,
+    attribution: tileAttr
   }).addTo(map);
 
   // Carto Voyager detailed basemap (alternative layer with richer color and topography)

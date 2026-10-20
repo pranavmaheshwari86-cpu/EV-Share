@@ -151,9 +151,9 @@ LOGGING = {
     },
 }
 
-# Map Tile Configuration (OpenStreetMap standard default — 100% free, reliable, zero API key)
-MAP_TILE_URL = os.getenv('MAP_TILE_URL', 'https://tile.openstreetmap.org/{z}/{x}/{y}.png')
-MAP_TILE_ATTRIBUTION = os.getenv('MAP_TILE_ATTRIBUTION', '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors')
+# Map Tile Configuration (Esri World Street Map default — 100% free CDN, zero API key, no localhost 403 blocks)
+MAP_TILE_URL = os.getenv('MAP_TILE_URL', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}')
+MAP_TILE_ATTRIBUTION = os.getenv('MAP_TILE_ATTRIBUTION', 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, METI, TomTom')
 MAP_TILE_SUBDOMAINS = os.getenv('MAP_TILE_SUBDOMAINS', '')
 MAP_TILE_MAX_ZOOM = int(os.getenv('MAP_TILE_MAX_ZOOM', '19'))
 

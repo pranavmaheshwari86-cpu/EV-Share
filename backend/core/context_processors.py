@@ -20,8 +20,8 @@ def app_context(request):
         'PILOT_CORRIDOR_NAME': 'Yamuna Expressway (Delhi NCR – Agra)',
         'PLATFORM_NAME': 'EV Share',
         'PLATFORM_TAGLINE': 'Your Charger. Someone Else’s Journey. Everyone Benefits.',
-        'MAP_TILE_URL': getattr(settings, 'MAP_TILE_URL', 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'),
-        'MAP_TILE_ATTRIBUTION': getattr(settings, 'MAP_TILE_ATTRIBUTION', '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors'),
+        'MAP_TILE_URL': getattr(settings, 'MAP_TILE_URL', 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}'),
+        'MAP_TILE_ATTRIBUTION': getattr(settings, 'MAP_TILE_ATTRIBUTION', 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, METI, TomTom'),
         'MAP_TILE_SUBDOMAINS': getattr(settings, 'MAP_TILE_SUBDOMAINS', ''),
         'MAP_TILE_MAX_ZOOM': getattr(settings, 'MAP_TILE_MAX_ZOOM', 19),
     }

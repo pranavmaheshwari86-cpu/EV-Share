@@ -159,23 +159,22 @@ document.addEventListener('DOMContentLoaded', function() {
   const tileSubdomains = "{{ MAP_TILE_SUBDOMAINS|default:'abcd'|escapejs }}";
   const tileMaxZoom = {{ MAP_TILE_MAX_ZOOM|default:19 }};
 
-  // OpenStreetMap standard tiles (reliable, 100% free, zero API key or watermark)
-  const osmStandard = L.tileLayer(tileUrl, {
+  // Primary Basemap: Esri World Street Map (high-detail corridor roads, reliable CDN, zero 403 blocks)
+  const streetBasemap = L.tileLayer(tileUrl, {
     maxZoom: tileMaxZoom,
-    subdomains: tileSubdomains ? tileSubdomains.split('') : ['a', 'b', 'c'],
     attribution: tileAttr
   }).addTo(map);
 
-  // Subdued Light Gray Canvas (Esri World Light Gray — sleek, Apple-quiet aesthetic, no API key)
-  const esriGray = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+  // Alternative Basemap: Esri World Light Gray Base (subdued, Apple-quiet minimalist styling)
+  const grayBasemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
     maxZoom: 16,
     attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
   });
 
   // Layer control for switching basemaps
   L.control.layers({
-    'OpenStreetMap Standard': osmStandard,
-    'Subdued Light (Esri Gray)': esriGray
+    'Road & Expressway (Esri Streets)': streetBasemap,
+    'Subdued Light (Esri Gray)': grayBasemap
   }, null, { position: 'topright' }).addTo(map);
 
   // Yamuna Expressway corridor polyline (Greater Noida -> Dankaur -> Jewar -> Tappal -> Mathura -> Agra)

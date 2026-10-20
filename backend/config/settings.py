@@ -151,10 +151,10 @@ LOGGING = {
     },
 }
 
-# Map Tile Configuration (CARTO Positron default — Apple-quiet, high contrast, unblocked)
-MAP_TILE_URL = os.getenv('MAP_TILE_URL', 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png')
-MAP_TILE_ATTRIBUTION = os.getenv('MAP_TILE_ATTRIBUTION', '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>')
-MAP_TILE_SUBDOMAINS = os.getenv('MAP_TILE_SUBDOMAINS', 'abcd')
+# Map Tile Configuration (OpenStreetMap standard default — 100% free, reliable, zero API key)
+MAP_TILE_URL = os.getenv('MAP_TILE_URL', 'https://tile.openstreetmap.org/{z}/{x}/{y}.png')
+MAP_TILE_ATTRIBUTION = os.getenv('MAP_TILE_ATTRIBUTION', '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors')
+MAP_TILE_SUBDOMAINS = os.getenv('MAP_TILE_SUBDOMAINS', '')
 MAP_TILE_MAX_ZOOM = int(os.getenv('MAP_TILE_MAX_ZOOM', '19'))
 
 # Production Security Defaults

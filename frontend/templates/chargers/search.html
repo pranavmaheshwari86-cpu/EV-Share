@@ -159,24 +159,23 @@ document.addEventListener('DOMContentLoaded', function() {
   const tileSubdomains = "{{ MAP_TILE_SUBDOMAINS|default:'abcd'|escapejs }}";
   const tileMaxZoom = {{ MAP_TILE_MAX_ZOOM|default:19 }};
 
-  // Apple-quiet basemap (subdued roads, high-contrast Apple-quiet styling, no OSM 403 blocks)
-  const cartoPositron = L.tileLayer(tileUrl, {
+  // OpenStreetMap standard tiles (reliable, 100% free, zero API key or watermark)
+  const osmStandard = L.tileLayer(tileUrl, {
     maxZoom: tileMaxZoom,
-    subdomains: tileSubdomains,
+    subdomains: tileSubdomains ? tileSubdomains.split('') : ['a', 'b', 'c'],
     attribution: tileAttr
   }).addTo(map);
 
-  // Carto Voyager detailed basemap (alternative layer with richer color and topography)
-  const cartoVoyager = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-    maxZoom: 19,
-    subdomains: 'abcd',
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>'
+  // Subdued Light Gray Canvas (Esri World Light Gray — sleek, Apple-quiet aesthetic, no API key)
+  const esriGray = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+    maxZoom: 16,
+    attribution: 'Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ'
   });
 
   // Layer control for switching basemaps
   L.control.layers({
-    'Quiet Light (Apple Style)': cartoPositron,
-    'Detailed Voyager': cartoVoyager
+    'OpenStreetMap Standard': osmStandard,
+    'Subdued Light (Esri Gray)': esriGray
   }, null, { position: 'topright' }).addTo(map);
 
   // Yamuna Expressway corridor polyline (Greater Noida -> Dankaur -> Jewar -> Tappal -> Mathura -> Agra)

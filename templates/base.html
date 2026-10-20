@@ -19,6 +19,8 @@
   {% block extra_head %}{% endblock %}
 </head>
 <body>
+  <!-- Accessible Skip Navigation -->
+  <a href="#main-content" class="visually-hidden-focusable p-2 bg-white text-primary position-absolute top-0 start-0 m-2 rounded shadow" style="z-index: 9999;">Skip to main content</a>
 
   <!-- Top Corridor Pilot Ribbon -->
   <div class="evs-corridor-ribbon">
@@ -112,7 +114,7 @@
   {% endif %}
 
   <!-- Main Content Block -->
-  <main class="flex-grow-1">
+  <main class="flex-grow-1" id="main-content">
     {% block content %}{% endblock %}
   </main>
 

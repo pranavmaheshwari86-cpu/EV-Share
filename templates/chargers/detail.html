@@ -212,19 +212,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const slotItems = document.querySelectorAll('.slot-item:not(.slot-disabled)');
     countBadge.textContent = `${slotItems.length} open`;
     
+    function selectSlot(item) {
+      document.querySelectorAll('.slot-item').forEach(i => {
+        i.classList.remove('selected');
+        i.setAttribute('aria-selected', 'false');
+      });
+      item.classList.add('selected');
+      item.setAttribute('aria-selected', 'true');
+      
+      const start = item.getAttribute('data-start');
+      const end = item.getAttribute('data-end');
+      const display = item.getAttribute('data-display');
+      
+      startInput.value = start;
+      endInput.value = end;
+      displaySpan.textContent = display;
+      proceedBtn.disabled = false;
+    }
+
     slotItems.forEach(function(item) {
+      item.setAttribute('role', 'button');
+      item.setAttribute('tabindex', '0');
+      item.setAttribute('aria-selected', 'false');
+
       item.addEventListener('click', function() {
-        slotItems.forEach(i => i.classList.remove('selected'));
-        item.classList.add('selected');
-        
-        const start = item.getAttribute('data-start');
-        const end = item.getAttribute('data-end');
-        const display = item.getAttribute('data-display');
-        
-        startInput.value = start;
-        endInput.value = end;
-        displaySpan.textContent = display;
-        proceedBtn.disabled = false;
+        selectSlot(item);
+      });
+
+      item.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          selectSlot(item);
+        }
       });
     });
   }
@@ -254,11 +273,17 @@ document.addEventListener('DOMContentLoaded', function() {
         let html = '';
         data.slots.forEach(slot => {
           const disabledClass = slot.is_available ? '' : 'slot-disabled';
+          const tabIndex = slot.is_available ? '0' : '-1';
+          const ariaDisabled = slot.is_available ? 'false' : 'true';
           html += `
             <div class="slot-item ${disabledClass}"
                  data-start="${slot.slot_start}"
                  data-end="${slot.slot_end}"
-                 data-display="${slot.display}">
+                 data-display="${slot.display}"
+                 role="button"
+                 tabindex="${tabIndex}"
+                 aria-selected="false"
+                 aria-disabled="${ariaDisabled}">
               <div class="slot-time">${slot.start_time_str}</div>
               <div class="small text-muted">${slot.end_time_str}</div>
             </div>

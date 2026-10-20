@@ -9,6 +9,7 @@ app_name = 'chargers'
 urlpatterns = [
     path('', views.search_chargers_view, name='search'),
     path('urgent-assistance/', views.low_battery_view, name='low_battery'),
+    path('low-battery/', views.low_battery_view, name='low_battery_alias'),
     path('my-listings/', views.host_charger_list_view, name='host_list'),
     path('mine/', views.host_charger_list_view, name='mine'),
     path('new/', views.create_charger_view, name='create'),

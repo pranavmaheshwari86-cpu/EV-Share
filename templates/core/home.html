@@ -45,66 +45,62 @@
       <a href="{% url 'chargers:search' %}" class="btn btn-secondary btn-sm mt-3 mt-md-0">View Interactive Map →</a>
     </div>
 
-    <!-- Featured Verified Listings -->
-    <div class="row g-4">
-      {% if featured_chargers %}
+    <!-- Featured Verified Listings - Paired Promo Grid (12px Gutters) -->
+    {% if featured_chargers %}
+      <div class="evs-promo-grid">
         {% for charger in featured_chargers %}
-          <div class="col-md-6 col-lg-4">
-            <div class="evs-card h-100 d-flex flex-column">
-              <div class="position-relative" style="height: 180px; background-color: #E5E5EA; overflow: hidden;">
-                {% if charger.photos %}
-                  <img src="{% static charger.photos.0 %}" alt="{{ charger.title }}" class="w-100 h-100" style="object-fit: cover;" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=600&auto=format&fit=crop&q=80';">
-                {% else %}
-                  <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted" style="background: linear-gradient(135deg, #E0E0E0 0%, #F5F5F7 100%);">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
-                  </div>
-                {% endif %}
-                <div class="position-absolute top-0 end-0 m-2">
-                  <span class="evs-badge evs-badge-verified">Verified</span>
+          <div class="evs-card h-100 d-flex flex-column">
+            <div class="evs-card-media">
+              {% if charger.photos %}
+                <img src="{% static charger.photos.0 %}" alt="{{ charger.title }}" onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1593941707882-a5bba14938c7?w=600&auto=format&fit=crop&q=80';">
+              {% else %}
+                <div class="w-100 h-100 d-flex align-items-center justify-content-center text-muted" style="background: linear-gradient(135deg, #E0E0E0 0%, #F5F5F7 100%);">
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path></svg>
                 </div>
-                <div class="position-absolute bottom-0 start-0 m-2">
-                  <span class="evs-badge {% if charger.charger_type == 'DC' %}evs-badge-dc{% else %}evs-badge-ac{% endif %}">
-                    {{ charger.power_output_kw }} kW {{ charger.charger_type }}
-                  </span>
-                </div>
+              {% endif %}
+              <div class="position-absolute top-0 end-0 m-2">
+                <span class="evs-badge evs-badge-verified">Verified</span>
+              </div>
+              <div class="position-absolute bottom-0 start-0 m-2">
+                <span class="evs-badge {% if charger.charger_type == 'DC' %}evs-badge-dc{% else %}evs-badge-ac{% endif %}">
+                  {{ charger.power_output_kw }} kW {{ charger.charger_type }}
+                </span>
+              </div>
+            </div>
+
+            <div class="evs-card-body d-flex flex-column flex-grow-1">
+              <div class="d-flex justify-content-between align-items-baseline mb-1">
+                <h5 class="fw-semibold text-truncate mb-0" title="{{ charger.title }}">{{ charger.title }}</h5>
+                <div class="fw-bold text-dark fs-6 text-nowrap">₹{{ charger.price_per_kwh|floatformat:1 }} <span class="small text-muted fw-normal">/kWh</span></div>
+              </div>
+              <p class="small text-muted mb-2 text-truncate">📍 {{ charger.address.display_address }}, {{ charger.address.city }}</p>
+              
+              <div class="d-flex flex-wrap gap-1 mb-3">
+                {% for conn in charger.connector_types %}
+                  <span class="badge bg-light text-dark border small">{{ conn }}</span>
+                {% endfor %}
               </div>
 
-              <div class="evs-card-body d-flex flex-column flex-grow-1">
-                <div class="d-flex justify-content-between align-items-baseline mb-1">
-                  <h5 class="fw-semibold text-truncate mb-0" title="{{ charger.title }}">{{ charger.title }}</h5>
-                  <div class="fw-bold text-dark fs-6 text-nowrap">₹{{ charger.price_per_kwh|floatformat:1 }} <span class="small text-muted fw-normal">/kWh</span></div>
-                </div>
-                <p class="small text-muted mb-2 text-truncate">📍 {{ charger.address.display_address }}, {{ charger.address.city }}</p>
-                
-                <div class="d-flex flex-wrap gap-1 mb-3">
-                  {% for conn in charger.connector_types %}
-                    <span class="badge bg-light text-dark border small">{{ conn }}</span>
-                  {% endfor %}
-                </div>
-
-                <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
-                  <span class="small text-muted">
-                    {% if charger.reviews_count > 0 %}
-                      ★ {{ charger.average_rating }} ({{ charger.reviews_count }})
-                    {% else %}
-                      ★ New listing
-                    {% endif %}
-                  </span>
-                  <a href="{% url 'chargers:detail' charger_id=charger.id %}" class="btn btn-secondary btn-sm">Inspect & Book</a>
-                </div>
+              <div class="mt-auto d-flex justify-content-between align-items-center pt-2 border-top">
+                <span class="small text-muted">
+                  {% if charger.reviews_count > 0 %}
+                    ★ {{ charger.average_rating }} ({{ charger.reviews_count }})
+                  {% else %}
+                    ★ New listing
+                  {% endif %}
+                </span>
+                <a href="{% url 'chargers:detail' charger_id=charger.id %}" class="btn btn-primary btn-sm">Reserve Slot</a>
               </div>
             </div>
           </div>
         {% endfor %}
-      {% else %}
-        <div class="col-12">
-          <div class="evs-card p-5 text-center">
-            <h5 class="fw-semibold">No chargers listed yet</h5>
-            <p class="text-muted">Seed pilot corridor data to explore verified listings.</p>
-          </div>
-        </div>
-      {% endif %}
-    </div>
+      </div>
+    {% else %}
+      <div class="evs-card p-5 text-center">
+        <h5 class="fw-semibold">No chargers listed yet</h5>
+        <p class="text-muted">Seed pilot corridor data to explore verified listings.</p>
+      </div>
+    {% endif %}
   </div>
 </section>
 

@@ -1,663 +1,394 @@
-Apple India-Inspired Website --- UI/UX Design Specification
-Document: design.md
-Reference: https://www.apple.com/in/\
-Prepared: 19 October 2026
-Purpose: A practical design contract for product designers,
-frontend engineers, content designers, and QA.
-Status: Synthesized from the four supplied research/specification
-files. Reference-derived patterns are separated from implementation
-recommendations.
+# EV Share — UI/UX Design System Specification
+**Document:** `Design.md`  
+**Reference Design System:** Apple India-Inspired Quiet Commerce & Utility Design  
+**Application:** EV Share — Peer-to-Peer EV Charging Marketplace for Yamuna Expressway Corridor (Delhi NCR – Greater Noida – Mathura – Agra, ~165 km)  
+**Version:** 2.0.0 (Project-Adapted Specification)  
+**Date:** 20 October 2026  
+**Status:** Approved Architectural Contract for UI/UX Designers, Frontend Engineers, Content Designers, and QA.  
 
-1. Executive summary
-Apple India is best understood as a photography-first storefront that
-behaves like a gallery before it behaves like a shop. The interface is
-intentionally quiet: neutral chrome, concise copy, large product
-imagery, a small action-blue palette, and repeatable purchase/support
-paths. The site combines two modes:
-- Showcase: low-density, cinematic, emotionally engaging product
-  stories.
-- Utility: compact navigation, search, shopping bag, buying
-  information, disclosures, and a dense but well-organized footer.
-The design system should preserve the rhythm and interaction logic of
-the reference without treating campaign content, exact measurements, or
-Apple-owned assets as reusable generic defaults. Homepage products,
-promotions, and campaign order change over time; the durable pattern is
-the hierarchy, not a fixed list of products.
-Design outcome
-Create a premium, clear, responsive commerce experience where users can
-understand a featured product quickly, browse categories in one step,
-discover relevant offers, and continue to product details or purchase
-without ambiguity.
-Confidence labels
-- Observed/reference pattern: described consistently across the
-  supplied research files.
-- Implementation token: a recommended starting value inferred from
-  the reference, not a claim about Apple's private source CSS.
-- Validate: must be checked against current screenshots, real
-  content, and the implementation's own requirements before
-  pixel-level sign-off.
-This is an independent reference-derived specification, not an official
-Apple design document.
-2. Product and UX principles
-1. One idea per module. Each hero or tile communicates one product,
-   benefit, or campaign.
-2. The product is the layout. Photography should carry the visual
-   weight; do not put every product in a floating, shadowed card.
-3. Quiet chrome. Navigation and controls remain legible but
-   visually secondary to the campaign.
-4. Short, confident copy. Use concise headlines, one short
-   supporting line, and at most two actions in a module.
-5. Blue means interaction. Reserve action blue for links, focus
-   indicators, and primary actions; do not use it as decoration.
-6. Whitespace creates hierarchy. Prefer spacing and scale to
-   borders, gradients, and shadows.
-7. Predictable behavior. Keep navigation, action styling, search,
-   and footer conventions consistent.
-8. Progressive disclosure. Keep campaign copy concise while making
-   eligibility, financing terms, and legal details easy to reach.
-9. Responsive art direction. Change crops and text placement for
-   mobile rather than merely shrinking desktop layouts.
-10. Accessibility and performance are design requirements. Keyboard
-    support, reduced motion, stable image dimensions, and fast first
-    render are part of the intended experience.
-11. Local relevance without a separate visual language. Use
-    India-specific currency, date formats, support details, and verified
-    offer terms within the same neutral system.
-12. Truth over persuasion. Never invent discounts, urgency, reviews,
-    stock availability, product specifications, or financing terms.
-Avoid
-- Decorative gradients or glass effects unrelated to readability or
-  actual interface material.
-- Multiple accent colors competing with the product.
-- Long paragraphs, several headlines, or more than two CTAs inside a
-  hero.
-- Generic stock photography, distorted product imagery, or
-  inconsistent crops.
-- Heavy card shadows, arbitrary borders, and excessive corner rounding
-  on full-width campaign tiles.
-- Autoplaying sound, unpausable animation, fake scarcity, and
-  placeholder links in production.
-- Reusing Apple logos, product renders, campaign artwork, films, or
-  proprietary font files without appropriate rights.
-3. Audience, goals, and success criteria
-Primary audiences
-- Intent-led shoppers: know the category or product and want a
-  short route to buying.
-- Explorers: browse product families, benefits, comparisons, and
-  editorial stories.
-- Existing customers: need support, account, order, store, or
-  service destinations.
-- India-focused shoppers: need clear, accurate information about ₹
-  pricing, eligible-card offers, No Cost EMI, trade-in, delivery, and
-  pickup.
-- Education and business customers: need access to relevant
-  purchasing routes without overcrowding the primary navigation.
-Core journeys
-  User goal               Entry point             Desired next step
-  Learn about a featured  Hero or promo tile      Product overview
-  product                                         
+---
 
-  Buy or pre-order        Hero/tile CTA           Correct product
-                                                  configuration or
-                                                  purchase flow
+## 1. Executive Summary
 
-  Browse a category       Global navigation or    Category landing page
-                          menu                    
+**EV Share** is a peer-to-peer EV charging marketplace engineered specifically for long-distance highway travel corridors in India, starting with the pilot **Yamuna Expressway Corridor (Delhi NCR to Agra, 165 km)**.
 
-  Check financing or      Offer ribbon / buying   Eligibility and terms
-  promotions              information             
+Following the design discipline of Apple India's quiet, photography-first digital gallery, EV Share treats charging infrastructure as an essential, high-trust travel utility rather than a noisy classifieds board. The interface remains calm and restrained: neutral chrome, generous whitespace, high-contrast typography, large location and facility imagery, a focused action-blue (`#0071E3`) interaction palette, and clear transactional paths for drivers and hosts.
 
-  Find support or order   Navigation/footer       Relevant support
-  status                                          destination
+The design system unifies two operating modes:
+1. **Showcase Mode:** Low-density, cinematic, narrative-led corridor storytelling highlighting waypoint milestones (Noida KM 0, Dankaur KM 38, Jewar KM 42, Mathura KM 108, Agra KM 165), host properties, and EV driver convenience.
+2. **Utility Mode:** Compact navigation, interactive Leaflet vector mapping, connector filtering (CCS2, Type 2, 15A), atomic time-slot selection grids, real-time meter telemetry check-in, transparent pricing breakdowns, and an executive administration console.
 
-  Find a store            Footer/store link       Store locator
+### Design Outcome
+Deliver a premium, highly dependable highway charging experience where drivers can locate verified chargers along the expressway within seconds, confirm connector and vehicle compatibility, lock guaranteed slots without double-booking anxiety, and check in smoothly at host locations.
 
-  Browse entertainment    Media gallery           Selected title or
-                                              service destination
-Suggested success measures
-- Hero and tile CTA click-through rate.
-- Search engagement and search-to-product click-through.
-- Category navigation success and time to destination.
-- Offer-information engagement and reduced confusion around
-  eligibility.
-- Mobile menu completion and first meaningful interaction.
-- Core Web Vitals targets: LCP ≤ 2.5 seconds, INP ≤ 200 ms, CLS ≤ 0.1
-  where practical.
-- Accessibility defect count, broken-link count, and
-  horizontal-overflow count.
-These are suggested measurement targets, not claims about Apple's
-internal analytics.
-4. Information architecture
-4.1 Global navigation
-Reference order:
-1. Brand/home mark
-2. Store
-3. Mac
-4. iPad
-5. iPhone
-6. Watch
-7. AirPods
-8. Home
-9. Entertainment
-10. Accessories
-11. Support
-12. Search
-13. Shopping bag
-For a different product, replace the reference categories with the
-actual site's categories. Keep the primary row short; move long-tail
-destinations into category menus and the footer.
-4.2 Navigation behavior
-Desktop - Compact horizontal bar, aligned to a common baseline. -
-Brand mark at the start, categories distributed through the center,
-search and bag at the end. - Category flyouts may organize links into
-Explore, Shop, and More from \(category\). - Flyouts must
-have clear open/close behavior and not obscure the page without a
-dismissible path. - The global navigation remains above page content in
-the stacking order.
+### Confidence Labels
+- **Preserved Design Token:** Core visual values (colors, spacing, typography, radii, motion) carried directly from the Apple-inspired reference specification.
+- **Project Domain Component:** Custom UI components engineered specifically for EV Share (e.g., Slot Grid, Leaflet Map, Session Telemetry Meter, Payout Split Table).
+- **Implementation Constraint:** Technical and compliance boundaries (e.g., WCAG 2.2 AA contrast, 15%/85% fee separation, simulation notices).
 
-Compact/tablet/mobile - Replace the word-link row with a clearly
-labeled Menu control when the full navigation no longer fits. - Keep the
-brand/home, search, and bag reachable. - Use a full-screen or large
-overlay/drawer with readable, left-aligned links. - Prevent background
-scrolling while the menu is open. - Close using an explicit close
-control and Escape where supported; return focus to the menu trigger. -
-Avoid hover-only navigation. Every menu must work with keyboard and
-touch.
+---
 
-Recommended responsive thresholds (starting points) - Small:
-max-width: 734px - Compact navigation: max-width: 833px - Medium:
-735px–1068px - Large: 1069px–1439px - Extra-large: 1440px+
+## 2. Product and UX Principles
 
-Treat these as reference-derived starting points. Test actual content at
-320, 375, 390, 734, 768, 833, 1024, 1068, 1280, 1440, and wide desktop
-sizes.
-4.3 Homepage sequence
-The supplied audit describes the following campaign sequence for the
-audited date. The specific products, titles, and offers are
-time-sensitive; use this as an example of page rhythm, not as
-permanent content.
-1. Global navigation
-2. Optional India-specific offer ribbon
-3. Primary full-bleed hero
-4. Secondary campaign/festive hero
-5. Third hero or cinematic feature
-6. Product promotion tiles, generally in balanced pairs
-7. Additional product/service promotions
-8. Horizontal entertainment/editorial gallery
-9. Footnotes and legal disclosures
-10. Footer directory
-11. Region, copyright, and legal base row
-The rhythm alternates large, low-density stories with smaller
-product/service promotions. Do not turn every section into an identical
-card.
-4.4 Footer information architecture
-Recommended groupings drawn from the reference:
-- Shop and Learn
-- Wallet and payments
-- Account
-- Entertainment and services
-- Apple Store / physical retail / buying support
-- Business
-- Education
-- Healthcare
-- Government
-- Values
-- About
-- Legal, privacy, region, and site map
-Include a clear store-finder/help strip above the directory when
-relevant. On mobile, collapse groups into accessible accordions. Keep
-legal text and country/region controls reachable without excessive
-scrolling.
-5. Visual design foundations
-5.1 Color tokens
-The reference is largely monochrome. Product and campaign photography
-supplies most of the color; UI color is restrained.
-  Token                       Suggested value               Purpose
-  --color-canvas            #FFFFFF                     Main page background
+1. **One Idea Per Module.** Every hero, banner, or card communicates a single primary waypoint, charger listing, or driver action.
+2. **The Charger & Premise Is the Layout.** Real location photography (driveways, parking bays, charging units, waiting amenities) carries visual weight. Avoid arbitrary floating drop-shadowed cards.
+3. **Quiet Chrome.** Headers, filter bars, and controls stay legible but visually subordinate to corridor maps, charger photography, and slot availability.
+4. **Short, Confident Copy.** Use concise headlines, one clear supporting line, and at most two actions per section.
+5. **Blue Means Interaction.** The action-blue color (`#0071E3`) is strictly reserved for interactive links, primary CTA buttons, focus indicators, and selected slot states. It is never used as decorative tinting.
+6. **Whitespace Creates Hierarchy.** Rely on the 4px baseline spacing scale rather than cluttered dividers, heavy borders, or decorative gradients.
+7. **Predictable Behavior.** Standardize the interactive map controls, slot selection grid, session start/end meters, and moderation cards across all screens.
+8. **Progressive Disclosure.** Surface critical highway details (kW output, connector type, distance from expressway, tariff/kWh) first; reveal host rules, parking instructions, and fee splits on interaction.
+9. **Responsive Art Direction.** Provide art-directed mobile adaptations: full-width listing cards on desktop become touch-friendly swipeable cards with sticky bottom booking sheets on mobile.
+10. **Accessibility and Performance by Default.** WCAG 2.2 AA compliance, keyboard navigation for time slots, zero layout shift (CLS ≤ 0.1), and rapid vector tile rendering.
+11. **India Highway Localization.** Native display of Indian Rupee (`₹`), en-IN number formatting, local expressway milestones (KM 0 to KM 165), and Indian EV charging standards (CCS2 DC Fast, Type 2 AC, 15A Socket).
+12. **Truth Over Persuasion.** Explicitly label simulated payment checkouts and driver-entered meter telemetry. Never fabricate false charger availability, fake ratings, or countdown urgency timers.
 
-  --color-canvas-subtle     #F5F5F7                     Offer ribbon, subtle
-                                                            surfaces, footer
+### What to Avoid
+- Decorative neon gradients, artificial glassmorphism, or colored card borders.
+- Cluttered charging cards showing more than two competing action buttons.
+- Generic stock photos of foreign charging stations (e.g., US/Europe plug standards like CCS1 or CHAdeMO).
+- Excessive card rounding (keep card radii at a restrained 16px, controls at 8–12px, pills at 999px).
+- Autoplaying audio or unpausable carousel animations.
+- Missing or hidden disclaimers regarding simulated payments or manual meter verification.
 
-  --color-canvas-elevated   #FAFAFC                     Light flyout/search
-                                                            surface
+---
 
-  --color-ink               #1D1D1F                     Primary text
+## 3. Audience, Goals, and Success Criteria
 
-  --color-ink-secondary     #333336                     Secondary UI text
+### Primary Audiences
+- **Corridor EV Drivers:** Commuters and road-trippers traveling between Delhi NCR and Agra (via Noida, Jewar, Mathura) needing guaranteed charging slots without queue anxiety.
+- **Low-Battery Emergency Drivers:** Motorists with critical state-of-charge (< 20%) requiring immediate, distraction-free routing to the nearest active charging point.
+- **Highway & Gated Property Hosts:** Homeowners, farmhouses, hotels, and highway rest-stop operators monetizing idle EV charging equipment.
+- **Platform Administrators:** Internal operations team reviewing host KYC documents, moderating new charger listings, and resolving session meter disputes.
 
-  --color-ink-tertiary      #6E6E73                     Supporting text
+### Core User Journeys
 
-  --color-ink-quaternary    #86868B                     Metadata and fine
-                                                            print; verify contrast
+| User Goal | Entry Point | Desired Next Step |
+| :--- | :--- | :--- |
+| **Discover Corridor Chargers** | Home / Search bar | Interactive Leaflet Map with filtered waypoint pins |
+| **Reserve Guaranteed Slot** | Charger Detail Page | Time slot grid selection -> Atomic Slot Lock -> Checkout |
+| **Emergency Charge (Low Battery)** | Quick Nav / Banner | High-contrast nearest waypoint list with 1-tap booking |
+| **Check-In & Start Session** | Active Booking View | Enter starting kWh odometer meter reading & photo |
+| **Complete Session & Pay** | Running Session View | Enter ending meter reading -> Review ₹ total -> Complete |
+| **List a Charger (Host)** | Host Onboarding Nav | Multi-step form: Location, Connector, Power kW, Pricing |
+| **Moderate Listing (Admin)** | Admin Dashboard | Review KYC / listing proof -> Approve or Request Edits |
 
-  --color-white             #FFFFFF                     Text/icons on dark
-                                                            imagery
+### Success Measures
+- **Slot Lock Conversion:** > 80% checkout completion without double-booking conflicts.
+- **Zero Double-Bookings:** 100% enforcement of atomic database slot reservation.
+- **Core Web Vitals:** LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1 across all pages.
+- **Accessibility:** 0 critical axe-core / WCAG 2.2 AA accessibility violations.
 
-  --color-black             #000000                     Pure black media
-                                                            backgrounds where
-                                                            appropriate
+---
 
-  --color-link              #0066CC                     Text links on light
-                                                            surfaces
+## 4. Information Architecture & Navigation
 
-  --color-link-dark         #2997FF                     Links on dark surfaces
+### 4.1 Global Navigation Hierarchy
+The top-level navigation follows Apple's quiet, horizontal layout:
+1. **Brand Mark:** `EV Share` (monoline lightning icon + semibold wordmark)
+2. **Find Charger:** Link to `/chargers/` (interactive map + listing directory)
+3. **Corridor Map:** Direct anchor link to expressway waypoint route
+4. **Emergency Low Battery:** Urgent shortcut to `/chargers/low-battery/`
+5. **How It Works:** Educational corridor journey guide (`/how-it-works/`)
+6. **Safety & Standards:** Host and driver safety commitments (`/safety/`)
+7. **Host Portal:** Contextual link (`/accounts/host-onboarding/` or `/chargers/manage/`)
+8. **User Account / Garage:** Role-aware menu (Driver Profile, Host Reservations, Admin Portal, Sign Out)
+9. **Authentication CTAs:** "Sign In" and "Join EV Share" for unauthenticated visitors
 
-  --color-action            #0071E3                     Primary action and
-                                                            focus ring
+### 4.2 Navigation Behavior
+- **Desktop (≥ 834px):** Fixed 44px height bar, `rgba(255, 255, 255, 0.85)` background with `backdrop-filter: blur(20px)`, subtle bottom border `rgba(0, 0, 0, 0.08)`. Centered nav items with action blue hover highlight.
+- **Mobile (≤ 833px):** Compact 48px header with Brand Mark, Low-Battery icon badge, and accessible hamburger drawer toggle. When opened, an animated full-screen drawer displays left-aligned 24px category links, preventing background scrolling.
 
-  --color-action-hover      #0076DF                     Hover state
+### 4.3 Homepage Section Sequence
+1. **Global Navigation:** Frosted quiet chrome header.
+2. **Corridor Announcement Ribbon:** Subtle banner highlighting Yamuna Expressway pilot operational status.
+3. **Hero Module:** Cinematic headline, expressway route subtitle, quick search input, and dual actions ("Explore Corridor Nodes" & "List Your Charger").
+4. **Corridor Waypoint Gallery:** Paired promo tiles showcasing verified highway chargers at Noida (KM 0), Dankaur (KM 38), Jewar (KM 42), Mathura (KM 108), and Agra (KM 165).
+5. **Interactive Expressway Preview:** Embedded Leaflet map segment displaying route waypoints and real-time charger status.
+6. **Host Partnership Section:** Clean, high-impact module encouraging property owners along the expressway to list their chargers.
+7. **Platform Safety & Disclaimers:** Transparent badges detailing peer-to-peer verification, transparent 15%/85% fee split, and simulation watermarks.
+8. **Footer Directory:** Categorized navigation links and legal disclosures.
 
-  --color-action-active     #006EDB                     Pressed state
+### 4.4 Footer Directory Structure
+- **Corridor Waypoints:** Noida Sector 128 (KM 0), Dankaur Interchange (KM 38), Jewar Airport Node (KM 42), Mathura Milestone (KM 108), Agra Expressway Terminal (KM 165).
+- **Driver Services:** Find Highway Chargers, Vehicle Garage Profile, Booking History, Low Battery Finder, Cancellation Policy.
+- **Host Hub:** List Your Charger, Host KYC Verification, Payout Breakdown (85%), Host Safety Protocol.
+- **Governance & Legal:** About EV Share, Terms of Service, Privacy Policy, Audit Logs, Administrator Portal.
+- **Base Row:** Regional mark (`Yamuna Expressway, India`), copyright, and clean legal links.
 
-  --color-divider           rgba(0, 0, 0, 0.16)         Quiet rules and
-                                                            separators
+---
 
-  --color-divider-dark      rgba(255, 255, 255, 0.24)   Separators on dark
-                                                            surfaces
+## 5. Visual Design Foundations
 
-  --color-success           #008009                     Commerce success
-                                                            feedback only
+### 5.1 Color Tokens (Exact Preservation)
+The design system preserves the exact Apple-inspired palette:
 
-  --color-warning           #B64400                     Warning feedback only
+| Token Name | Hex / RGBA Value | Purpose & EV Share Usage |
+| :--- | :--- | :--- |
+| `--color-canvas` | `#FFFFFF` | Main page background, primary clean surfaces |
+| `--color-canvas-subtle` | `#F5F5F7` | Corridor announcement ribbon, page section backgrounds, footer |
+| `--color-canvas-elevated`| `#FAFAFC` | Card surfaces, modal sheets, map control overlays |
+| `--color-ink` | `#1D1D1F` | Primary headings, charger titles, price figures |
+| `--color-ink-secondary` | `#333336` | Subheadings, body copy, slot time labels |
+| `--color-ink-tertiary` | `#6E6E73` | Distance metrics, amenities text, footnote labels |
+| `--color-ink-quaternary`| `#86868B` | Timestamp metadata, input placeholder text, fine print |
+| `--color-white` | `#FFFFFF` | Text on dark buttons, map badge labels |
+| `--color-black` | `#000000` | Pure dark contrast elements, camera/image backgrounds |
+| `--color-link` | `#0066CC` | Inline textual links on light surfaces |
+| `--color-link-dark` | `#2997FF` | Links on dark or inverted card overlays |
+| `--color-action` | `#0071E3` | Primary action buttons, selected slot outline, focus ring |
+| `--color-action-hover` | `#0076DF` | Primary button hover state |
+| `--color-action-active`| `#006EDB` | Primary button pressed state |
+| `--color-action-subtle`| `rgba(0, 113, 227, 0.08)` | Active nav item background, unselected slot hover |
+| `--color-divider` | `rgba(0, 0, 0, 0.16)` | Card dividers, table borders, header bottom line |
+| `--color-divider-dark` | `rgba(255, 255, 255, 0.24)`| Dividers across dark photo banners |
+| `--color-success` | `#008009` | Verified host badge, active slot available, session finished |
+| `--color-warning` | `#B64400` | Pending KYC verification, pending charger moderation |
+| `--color-danger` | `#E30000` | Double-booking lock error, emergency battery alert, cancellation |
 
-  --color-danger            #E30000                     Destructive/error
-                                                        feedback only
-Color rules - Keep the interface neutral; do not sample product
-finishes or campaign artwork into UI tokens. - Blue communicates an
-available action, not decoration. - Use semantic colors only for
-meaningful status feedback. - Every light/dark component variant must
-update text, links, focus treatment, and scrim together. - Validate
-contrast on the actual background and image crop. Do not assume a color
-is accessible because it is used in the reference.
-5.2 Typography
-Use the system sans-serif stack unless the project is licensed to use
-the intended typeface. Apple's SF Pro is proprietary; do not bundle or
-redistribute it without rights.
-font-family: "SF Pro Display", "SF Pro Text", "Helvetica Neue",
-  Helvetica, Arial, sans-serif;
-A safe general-purpose fallback is:
-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-Use display styling for large marketing headlines and text styling for
-navigation, body, controls, and footer. Limit most modules to regular
-400 and semibold 600 weights.
-  Role               Large desktop         Medium   Small/mobile         Weight
-  Hero/tile            56px / 1.07    48px / 1.08   32px / 1.125            600
-  headline                                                       
+---
 
-  Chapter/display         48--56px       40--48px       32--40px            600
-  headline                                                       
+### 5.2 Typography Foundations
 
-  Promo headline       40px / 1.10   32px / 1.125   32px / 1.125            600
+**Font Family Stacks:**
+- Primary Display: `"SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif`
+- System Fallback: `-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`
+- Monospace (Telemetry / PINs / IDs): `ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace`
 
-  Hero subhead         28px / 1.14    24px / 1.17    19px / 1.21            400
+**Typography Hierarchy Scale:**
 
-  Body copy            17px / 1.47    17px / 1.47     16--17px /            400
-                                                            1.45 
+| Role | Large Desktop (≥1069px) | Tablet (735–1068px) | Mobile (≤734px) | Weight | Line Height |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Corridor Hero Display** | `56px` | `44px` | `32px` | 600 (Semibold) | 1.08 |
+| **Section Title (h2)** | `40px` | `32px` | `26px` | 600 (Semibold) | 1.15 |
+| **Charger Card Title (h3)**| `24px` | `20px` | `18px` | 600 (Semibold) | 1.25 |
+| **Subhead / Lead** | `20px` | `18px` | `16px` | 400 (Regular) | 1.35 |
+| **Body Copy** | `17px` | `16px` | `15px` | 400 (Regular) | 1.47 |
+| **Metadata / Badges** | `13px` | `13px` | `12px` | 500 (Medium) | 1.30 |
+| **Legal / Footnotes** | `12px` | `12px` | `11px` | 400 (Regular) | 1.40 |
 
-  Navigation            12px / 1.4     12px / 1.4 28px / 1.14 in        400/600
-                                                   expanded menu 
+---
 
-  Button               14px / 1.29    14px / 1.29       14--17px            400
+### 5.3 Layout, Grid & Spacing Scale
 
-  Footer / footnote    12px / 1.33    12px / 1.33     12px / 1.4  400; headings
-                                                                        600
-These are practical starting values synthesized from the more detailed
-supplied audit. Tune by screenshot and content fit.
+The layout adheres strictly to Apple's **4px baseline spacing scale**:
 
-Typography rules - Keep headlines short and sentence case;
-punctuation is allowed when it supports the brand voice. - Limit hero
-headlines to two lines at common viewport widths where possible. - Do
-not use all caps for long marketing headlines. - Avoid arbitrary letter
-spacing, especially positive tracking on display text. - Use clear
-hierarchy through size and weight rather than multiple colors. - For
-Hindi or other Indic content, use an appropriate script-capable font and
-test line-height, shaping, and mixed-script behavior.
-5.3 Layout and grid
-- Full-bleed heroes span the viewport.
-- Promo tiles use a 12px gutter and are generally paired on
-  desktop/tablet; stack on small screens.
-- The footer directory and constrained text content may use a centered
-  max-width container around 980--1200px.
-- Overall page width should be fluid, not locked to one narrow
-  container.
-- Suggested desktop gutters: 20--24px between grid columns; mobile
-  page margins: 16--22px.
-- Suggested grid: 12 columns desktop, 8 tablet, 4 mobile.
-- Reserve media dimensions with width/height or aspect-ratio to
-  prevent layout shift.
-5.4 Spacing scale
-Use a 4px base scale and reuse values before introducing new ones.
+| Token | Pixel Value | Typical Application |
+| :--- | :--- | :--- |
+| `--space-1` | `4px` | Badge inner gap, tight inline margins |
+| `--space-2` | `8px` | Gap between icon and text, slot grid gap (mobile) |
+| `--space-3` | `12px` | Gutter between paired charger tiles, card inner gap |
+| `--space-4` | `16px` | Standard form field padding, mobile container margin |
+| `--space-5` | `20px` | Desktop grid column gap, card body padding |
+| `--space-6` | `24px` | Distance between subheadings and action buttons |
+| `--space-8` | `32px` | Spacing between major content sub-sections |
+| `--space-10` | `40px` | Hero bottom margin, search filter bar padding |
+| `--space-12` | `48px` | Top padding for section titles |
+| `--space-16` | `64px` | Major section vertical rhythm on desktop |
+| `--space-24` | `96px` | Hero section top/bottom padding |
 
-  Token            Value
-  --space-1        4px
-  --space-2        8px
-  --space-3       12px
-  --space-4       16px
-  --space-5       20px
-  --space-6       24px
-  --space-8       32px
-  --space-10      40px
-  --space-12      48px
-  --space-14      56px
-  --space-16      64px
-  --space-20      80px
-  --space-24      96px
-  --space-30     120px
+**Grid Specifications:**
+- **Max Container Width:** `1200px` (`--content-max`) with secondary constrained container `1140px` (`--container-max`).
+- **Tile Gutter:** Exactly `12px` between paired campaign tiles.
+- **Columns:** 12 columns on desktop, 8 columns on tablet, 4 columns on mobile.
 
-Typical relationships: - Headline to subhead: 8--12px. - Subhead to CTA
-group: 17--24px. - CTA-to-CTA gap: 14--17px. - Hero top padding: about
-48px; bottom padding: 56--60px on large screens. - Promo tile padding:
-around 44--60px vertically, responsive to available height. - Between
-major full-width modules: approximately 12px where the gallery rhythm
-calls for it.
-5.5 Radius, borders, and elevation
-- Marketing CTA buttons: capsule/pill radius (999px).
-- Homepage hero and promo tiles: square corners; the gutter separates
-  tiles.
-- Functional controls: use consistent, restrained radii (8--12px as a
-  starting point).
-- Borders: quiet 1px separators where needed, not around every tile.
-- Avoid drop shadows on campaign tiles and the global nav.
-- Use translucent blur only for the global navigation material if it
-  improves the intended visual layering; provide an opaque fallback.
-- Do not use glass, gradients, or shadows as general decoration.
-5.6 Iconography
-- Use simple, consistent, monoline icons.
-- Keep icon sizes around 16--20px in compact navigation and 24px in
-  large mobile menus.
-- Icon-only controls require accessible names.
-- Avoid emoji and multi-color decorative iconography in core site
-  chrome.
-- Use a consistent icon set rather than mixing visual styles.
-6. Component specifications
-6.1 Global navigation
-Anatomy: brand/home link, category links or Menu, search, shopping
-bag.
+---
 
-Starting dimensions - Desktop: approximately 44px tall. - Compact
-navigation: approximately 48px tall. - Safe-area aware padding on
-supported mobile devices. - High stacking priority so page content
-cannot cover the navigation.
+### 5.4 Shape, Elevation & Borders
 
-States - Default, hover, focus-visible, current destination, menu
-open, search open, bag open. - Hover may increase text contrast; do not
-rely on hover to reveal essential content. - Focus indicator must remain
-visible against translucent backgrounds.
+- **Buttons & Pills:** Pill radius `999px` (`--radius-pill`) for all primary, secondary, and badge elements.
+- **Cards & Surfaces:** Rounded `16px` (`--radius-card`) with a 1px border `rgba(0, 0, 0, 0.08)`.
+- **Form Controls:** Rounded `10px–12px` (`--radius-input`).
+- **Elevations (Quiet Shadows):**
+  - Subtle: `0 2px 8px rgba(0, 0, 0, 0.04)` (standard card default)
+  - Elevated: `0 8px 24px rgba(0, 0, 0, 0.06)` (card hover & filter overlay)
+  - Modal / Drawer: `0 20px 48px rgba(0, 0, 0, 0.12)` (booking checkout bottom sheet)
 
-Behavior - Logo returns to home. - Search and bag have clear
-accessible labels. - Menus open and close consistently, and Escape
-closes overlays where appropriate. - When a flyout is open, background
-content is visually subdued without making the menu feel like a
-disconnected floating card. - Avoid a visible bottom border on the
-homepage header if the translucent material already creates sufficient
-separation.
-6.2 Announcement / offer ribbon
-Purpose: communicate one time-sensitive promotion or service update.
-- Full-width, subtle light-gray surface.
-- Centered concise text with one inline destination.
-- Use India-specific currency and only verified offer terms.
-- Use footnote markers for conditions and map them to a readable
-  disclosure.
-- Allow clean wrapping on narrow screens.
-- If no valid offer exists, remove the ribbon rather than showing an
-  empty placeholder.
-- Do not add a carousel or fake urgency to the ribbon.
-6.3 Campaign hero
-Anatomy 1. Optional eyebrow/product label 2. Headline 3. Short
-supporting line or availability date 4. One or two actions 5. Image or
-video media
+---
 
-Layout variants - Centered, text above product. - Dark, light, or
-campaign-art theme. - Full-bleed cinematic hero. - Split layout only
-when content genuinely benefits from separate text and image columns.
+## 6. Component Specifications
 
-Starting dimensions - Large desktop: min-height around 580px; up to
-about 690px for tall storytelling moments. - Medium: around 570--650px
-depending on content. - Small: min-height around 500px. - Do not default
-to 100vh; browser chrome can crop the image on mobile.
+### 6.1 Global Navigation (`.evs-navbar`)
+- **Purpose:** Persistent top navigation bar across all screens.
+- **Anatomy:** Brand logo + lightning mark, primary destination links, emergency low battery badge, auth state menu (Driver/Host profile avatar or Sign In button).
+- **Height:** 44px (desktop), 48px (mobile).
+- **Material:** `rgba(255, 255, 255, 0.85)` with `backdrop-filter: blur(20px)`.
+- **Border:** 1px solid `rgba(0, 0, 0, 0.08)`.
 
-Rules - Place text in the quiet part of the image, usually above the
-product. - Keep the product visually dominant without colliding with
-copy or CTAs. - Use art-directed small, medium, and large crops; mobile
-is not just a scaled desktop image. - Use a static poster/start frame
-before any optional animation. - For text over imagery, test contrast at
-every breakpoint and add a restrained scrim only when necessary. - Use a
-meaningful image alt description for product details; avoid repeating
-the headline in alt text.
-6.4 Product and campaign tiles
-- Desktop/medium: two-column grid, approximately 12px gap.
-- Small screens: one column and edge-to-edge tiles where the reference
-  pattern calls for it.
-- Keep pairs visually balanced; do not leave a lone half-width tile
-  unless intentionally designed.
-- Suggested minimum heights: around 580px large, 490px medium, 500px
-  small; validate with actual content and media.
-- One headline, optional subhead/callout, and at most two actions.
-- Use original art direction per product.
-- When two actions exist, each action is its own target; avoid making
-  the entire image a third ambiguous link.
-- Clip media to the tile boundary so it does not spill into the
-  gutter.
-6.5 Links and buttons
-Text links - Blue on light backgrounds; lighter blue on dark
-backgrounds. - Concise verbs: "Learn more", "Shop", "Buy", "Compare",
-"Explore". - Hover/focus must be visible without depending on color
-alone.
+### 6.2 Corridor Announcement Ribbon (`.evs-corridor-ribbon`)
+- **Purpose:** Top-of-page announcement declaring pilot operational status.
+- **Styling:** Full width, background `--color-canvas-subtle` (`#F5F5F7`), font size `13px`, text color `--color-ink-secondary`.
+- **Content:** *"Yamuna Expressway Pilot Active: 5 verified charging waypoints between Noida (KM 0) and Agra (KM 165). Guaranteed slot locks enabled."*
 
-Primary transactional button - Use for high-priority actions such as
-Add to bag, Continue, or checkout. - Blue filled capsule with white
-label. - Include hover, active, focus-visible, loading, and disabled
-states when applicable.
+### 6.3 Corridor Hero (`.evs-hero`)
+- **Purpose:** Primary visual anchor on home and corridor overview pages.
+- **Anatomy:** Eyebrow tag (`Delhi – Agra Pilot`), bold display headline, one-line supporting statement, inline search input with connector dropdown, and dual CTAs.
+- **Typography:** Headline `56px` semibold, lead `20px` regular.
+- **Layout:** Centered content with maximum reading width of `820px`.
 
-Secondary action - Usually text link or a restrained
-outlined/neutral variant, depending on context. - Must be
-distinguishable from body copy. - Do not turn every link into a filled
-button.
+### 6.4 Waypoint & Charger Promo Tiles (`.evs-card`)
+- **Purpose:** Primary visual presentation of individual corridor charging stations.
+- **Anatomy:** 
+  - Photo banner (16:9 ratio, object-fit cover, subtle hover zoom).
+  - Floating badges: `Verified Host` (green), `Power kW` (purple/blue), and `Expressway Milestone` (KM marker).
+  - Body: Station title, host name, connector type icons (CCS2 / Type 2 / 15A), available amenities (WiFi, Restroom, Cafe).
+  - Price display: Prominent tariff (`₹18.50 / kWh` or `₹120 / hr`) with zero hidden fee disclaimer.
+  - Action: "Reserve Slot" primary pill button.
+- **Grid Layout:** 2 columns desktop (12px gap), 1 column mobile.
 
-Interaction - All actions must have real destinations or real
-behavior. - Use adequate touch targets (aim for at least 44×44 CSS px
-where feasible). - Avoid nested interactive elements and duplicate click
-targets.
-6.6 Search overlay
-Required states: - Closed - Open and focused - Query entered - Loading -
-Results - No results - Error - Cleared query
+### 6.5 Interactive Corridor Map (`#corridor-map`)
+- **Purpose:** Visual geo-spatial exploration of the Yamuna Expressway corridor.
+- **Implementation:** Leaflet.js with custom Apple-quiet map styling (subdued roads, high-contrast route polyline, custom waypoint markers with pulse animation for active chargers).
+- **Dimensions:** Fixed height `480px` on desktop, `320px` on mobile.
 
-Behavior: - Provide a visible input label or accessible name. - Support
-keyboard submit, clear, and close. - Keep focus within the overlay while
-it is modal; restore focus to the trigger on close. - Show useful empty
-and error states. - Do not show fabricated suggestions or results. -
-Search result destinations must be valid.
-6.7 Shopping bag / cart
-Required states: - Empty bag - Items present - Updating quantity -
-Removing item - Loading - Error - Checkout transition
+### 6.6 Time Slot Booking Selector (`.slot-grid`, `.slot-item`)
+- **Purpose:** Interactive time selection grid for booking a charging session.
+- **Anatomy:** 1-hour slot buttons showing start-end time and real-time status.
+- **States:**
+  - *Available:* White surface, 1px border, hover blue border + subtle action background.
+  - *Selected:* Filled action-blue (`#0071E3`), white text, bold label, `aria-selected="true"`.
+  - *Locked / Booked:* Disabled state, opacity 0.4, cross-hatch or neutral gray fill, `cursor: not-allowed`, `aria-disabled="true"`.
+- **Grid:** CSS Grid `repeat(auto-fill, minmax(130px, 1fr))`, gap `12px`.
 
-Behavior: - Display accurate item counts and totals. - Make
-remove/update actions explicit and reversible where practical. - Keep
-item price, selected options, quantity, and totals legible. - Provide a
-clear path to continue shopping and checkout. - Never simulate
-successful payment or inventory state without backend confirmation.
-6.8 Entertainment/editorial carousel
-- Horizontal media cards with snap points and clear visual grouping.
-- Use high-quality, correctly licensed poster art.
-- Provide a title, genre/eyebrow where appropriate, one short line,
-  and one clear action.
-- Support touch swiping, keyboard navigation, and visible controls
-  where needed.
-- Do not autoplay sound.
-- Respect reduced motion and avoid trapping keyboard focus.
-- If scroll position or pagination is shown, expose it accessibly.
-6.9 Footnotes and disclosures
-- Mark offer claims, availability dates, and conditions at the point
-  of use.
-- Provide matching, readable disclosures near the footer or in the
-  relevant purchase context.
-- Use semantic links between marker and disclosure where possible.
-- Do not make legal copy so small or low-contrast that it becomes
-  unusable.
-- Claims about cashback, EMI, trade-in, warranties, or availability
-  must be verified and dated.
-6.10 Footer
-- Use a subtle neutral surface and a constrained content width.
-- Group links by user intent and label each group clearly.
-- Use a multi-column directory on desktop and accordions on mobile.
-- Include store locator, contact, regional selector, copyright,
-  privacy, terms, sales/legal, and site map as appropriate.
-- Use semantic navigation landmarks and accessible accordion controls.
-- Avoid duplicating the full primary nav if it adds no value; the
-  footer serves long-tail discovery.
-7. Content design and localization
-Voice
-- Clear, concise, confident, human, benefit-led.
-- Short spoken phrases and sentence case.
-- Avoid overstatement, exclamation-heavy copy, and jargon.
-- Use one main message per section.
-Copy patterns
-Good pattern - Headline: one product idea or benefit. - Supporting
-line: one short explanation, availability date, or context. - CTA:
-direct verb. - Disclosure: concise marker and complete, readable terms.
+### 6.7 Charging Session Meter Card (`.session-meter-card`)
+- **Purpose:** Live check-in and check-out interface for recording vehicle odometer / charging meter kWh readings.
+- **Anatomy:** Monospace digital meter display, starting kWh input, optional odometer photo upload, elapsed timer, and live estimated cost calculation.
+- **Disclaimers:** Mandatory simulation notice: *"Manual unverified telemetry: Final billing calculated on host-confirmed meter delta."*
 
-Avoid - Multiple headlines in one tile. - Generic "Click here". -
-Unsupported superlatives. - Fake urgency ("last chance") without
-verified conditions. - Marketing copy copied verbatim from Apple when
-creating a different brand.
-India localization
-- Use ₹ for rupee amounts and en-IN conventions.
-- Use "No Cost EMI" when that is the verified offer wording; do not
-  silently change it to "interest-free".
-- Format phone numbers and dates for India.
-- Confirm local availability, taxes, bank eligibility, tenure,
-  exclusions, and offer caps before publishing.
-- Ensure every footnote marker maps to the correct terms.
-- For Hindi or bilingual pages, use proper Indic fonts and test line
-  wrapping, punctuation, and screen-reader pronunciation.
-8. Motion and interaction
-Motion should explain state changes, provide feedback, or support
-storytelling. It should not be ornamental.
+### 6.8 Checkout & Payment Fee Separation Table
+- **Purpose:** Transparent breakdown of booking costs.
+- **Anatomy:** 
+  - Base Energy / Slot Tariff: `₹ [Amount]`
+  - Platform Service Fee (15%): `₹ [Fee]` (clearly labeled)
+  - Host Net Payout (85%): `₹ [Payout]`
+  - Total Payable: Prominent bold figure.
+  - Payment Action: Simulated payment button with clear test badge.
 
-Suggested tokens:
-:root {
+### 6.9 Status Badges (`.evs-badge`)
+- **Pill Badges:** Capsule radius `999px`, padding `4px 10px`, font size `11px`, font-weight `600`, letter-spacing `0.02em`.
+  - `.evs-badge-verified`: Green text (`#008009`), light green background (`rgba(0, 128, 9, 0.08)`).
+  - `.evs-badge-dc`: Purple text (`#7B1FA2`), light purple background (`rgba(123, 31, 162, 0.1)`).
+  - `.evs-badge-ac`: Cyan text (`#0288D1`), light cyan background (`rgba(2, 136, 209, 0.1)`).
+  - `.evs-badge-simulation`: Amber text (`#E65100`), amber background (`#FFF3E0`).
+
+---
+
+## 7. Content Design & India Localization
+
+- **Tone of Voice:** Confident, quiet, helpful, transparent. No artificial urgency or countdown timers.
+- **Currency & Pricing:** Always prefix with `₹` symbol (e.g., `₹18.50 / kWh`). Format large numbers with Indian comma separation (`₹1,25,000`).
+- **Highway Milestones:** Always reference exact expressway chainage:
+  - *Noida Toll Plaza (KM 0)*
+  - *Dankaur Interchange / Formula 1 Track (KM 38)*
+  - *Jewar International Airport Interchange (KM 42)*
+  - *Mathura Milestone (KM 108)*
+  - *Agra Toll Plaza / Expressway Terminal (KM 165)*
+- **EV Specifications:** Standardize Indian EV terminology:
+  - Connector: CCS2 (DC Fast), Type 2 (AC), 15A 3-Pin Socket.
+  - Vehicle Models: Tata Nexon EV Max, MG ZS EV, Mahindra XUV400, Hyundai Ioniq 5, BYD Atto 3.
+- **Simulation Transparency:** Every simulated payment screen and test checkout must include the label:  
+  *“DEMO ENVIRONMENT: This payment transaction is simulated for pilot validation. No real funds are deducted.”*
+
+---
+
+## 8. Motion & Micro-Interactions
+
+Motion must explain state changes and provide immediate physical feedback without causing motion sickness:
+
+- **Tokens:**
+  ```css
   --motion-fast: 150ms;
   --motion-normal: 240ms;
   --motion-slow: 320ms;
   --ease-standard: cubic-bezier(0.28, 0.11, 0.32, 1);
-}
-- Use short opacity/transform transitions for menus and overlays.
-- Avoid large parallax shifts and unnecessary scroll-linked effects.
-- Avoid animating layout-heavy properties when transform/opacity can
-  achieve the same result.
-- Provide poster imagery and user control for moving media.
-- Do not autoplay audio.
-- Respect prefers-reduced-motion: reduce; remove non-essential
-  motion and avoid automatic carousel movement.
-- Animation must not delay navigation or hide important content.
-- Make open/closed states understandable without animation.
-9. Responsive behavior
-Small screens (≤ 734px)
-- Single-column campaign tile layout.
-- Compact navigation.
-- Hero and promo copy must fit without clipping or overlap.
-- Use mobile-specific image crops and appropriate text positioning.
-- Preserve clear CTA separation and comfortable touch targets.
-- Footer groups become accordions.
-- Avoid horizontal overflow at 320px width.
-Compact navigation range (≤ 833px)
-- Collapse the desktop word-link row into Menu before it becomes
-  crowded.
-- Keep brand, search, and bag reachable.
-- Use safe-area-aware padding and avoid covering content with
-  overlays.
-Medium screens (735--1068px)
-- Use two-column promo layouts only when the copy and imagery remain
-  legible.
-- Reduce type and padding before reducing contrast or hierarchy.
-- Check landscape tablets and short viewport heights.
-Large screens (≥ 1069px)
-- Use paired promo tiles with consistent gutters.
-- Use large art-directed product images and balanced negative space.
-- Do not allow text columns to become excessively wide.
-- Preserve full-bleed campaign imagery.
-Responsive test matrix
-Test at 320, 375, 390, 734, 768, 833, 1024, 1068, 1280, 1440, and 1920px
-widths; also test short-height landscape layouts, browser zoom to 200%,
-and device safe areas.
-10. Accessibility requirements
-Target WCAG 2.2 AA as the implementation baseline.
-- Use semantic landmarks (header, nav, main, footer) and a
-  logical heading order.
-- Provide skip navigation where useful.
-- All controls must be keyboard reachable and have visible focus.
-- Use accessible names for icon-only buttons.
-- Ensure overlays and menus support keyboard interaction, Escape where
-  appropriate, focus management, and focus restoration.
-- Aim for at least 4.5:1 contrast for normal text and 3:1 for large
-  text and meaningful UI boundaries, subject to WCAG exceptions.
-- Never communicate status through color alone.
-- Provide descriptive alt text for informative images and empty alt
-  for decorative imagery.
-- Use captions/transcripts where video content requires them.
-- Respect reduced motion, zoom, text resizing, and reflow.
-- Label form controls and provide clear, actionable validation
-  messages.
-- Ensure carousel controls have understandable names and do not make
-  keyboard navigation confusing.
-- Test with keyboard-only navigation and at least one screen reader.
-11. Imagery, media, and performance
-Imagery
-- Use high-resolution, professionally art-directed product or campaign
-  photography.
-- Keep product proportions and colors accurate.
-- Use negative space intentionally for text placement.
-- Supply small, medium, and large art-directed crops; use
-  srcset/sizes where appropriate.
-- Set explicit dimensions or aspect-ratio.
-- Use AVIF/WebP where supported with a suitable fallback.
-- Never hotlink production Apple assets for a new implementation; use
-  original or properly licensed material.
-Loading and runtime
-- Prioritize the main hero image and avoid lazy-loading the LCP image
-  if that delays its appearance.
-- Lazy-load below-the-fold images.
-- Defer non-critical media and scripts.
-- Prevent layout shift by reserving media space.
-- Use responsive image sizes instead of sending desktop originals to
-  phones.
-- Avoid expensive blur, filter, and scroll effects on large surfaces.
-- Keep the interface usable while optional animation or media loads.
-- Measure real Core Web Vitals rather than assuming the page is fast.
-12. Suggested design tokens (CSS)
-The values below are a starting implementation contract, synthesized
-from the supplied specifications. Validate them against the target page
-and project.
+  ```
+- **Button Interactions:** Scale transition (`transform: translateY(-1px)`) on hover, active state returns to `translateY(0)` with instant color change.
+- **Slot Selection:** 150ms border-color and background color transition with spring-like crispness.
+- **Drawer / Modal Motion:** Slide up from bottom on mobile (`translateY(0)` from `translateY(100%)`) over 240ms with standard ease.
+- **Accessibility:** Strict enforcement of `@media (prefers-reduced-motion: reduce)`: disable all transforms, scale effects, and animated transitions.
+
+---
+
+## 9. Responsive Breakpoints & Art Direction
+
+| Viewport Range | Device Category | Layout & Navigation Behavior |
+| :--- | :--- | :--- |
+| **≤ 734px** | Mobile phones | Single-column listings, 100% width cards, bottom sticky action sheet for slot booking, map collapses to toggle button |
+| **735px – 833px** | Compact Tablets | 2-column tiles where text allows, compact hamburger navigation |
+| **834px – 1068px** | Landscape Tablets | Full horizontal navigation bar, 2-column grid with 12px tile gutter |
+| **1069px – 1439px**| Standard Desktop | 12-column grid, max width 1140px, paired promo tiles, side-by-side map and listing view |
+| **≥ 1440px** | Large Displays | Centered fluid canvas, max container 1200px, generous negative margins |
+
+---
+
+## 10. Accessibility Requirements (WCAG 2.2 AA)
+
+- **Contrast Ratios:** Minimum 4.5:1 for normal body text against canvas (`#1D1D1F` on `#FFFFFF` yields 16.1:1). Minimum 3:1 for graphical controls and pill badges.
+- **Focus Rings:** Distinct 3px solid action-blue focus ring (`rgba(0, 113, 227, 0.5)`) on all interactive buttons, inputs, and slot items.
+- **ARIA Attributes:**
+  - Map markers: `role="button"` with descriptive `aria-label="Charger at KM 42 Jewar, 22 kW Type 2, Available"`.
+  - Slot selector: `role="grid"` with child `role="gridcell"`, `aria-selected="true/false"`, and `aria-disabled="true"`.
+- **Keyboard Trapping:** Modal dialogs and mobile navigation drawers must trap focus and close via `Escape` key, restoring focus to the opening element.
+
+---
+
+## 11. Imagery & Media Performance
+
+- **Asset Storage:** WebP format with JPEG fallbacks.
+- **Aspect Ratios:** Explicit aspect-ratio definitions (`aspect-ratio: 16 / 9` for listing cards, `4 / 3` for thumbnails) to ensure Cumulative Layout Shift (CLS) = 0.
+- **Lazy Loading:** Native `loading="lazy"` on all listing cards below the fold. Hero and map tiles prioritized with `fetchpriority="high"`.
+
+---
+
+## 12. Complete CSS Design Tokens (`:root`)
+
+The following CSS variables represent the complete production design system contract in `static/css/ev_share.css`:
+
+```css
 :root {
-  /* Color */
-  --color-canvas: #ffffff;
-  --color-canvas-subtle: #f5f5f7;
-  --color-canvas-elevated: #fafafc;
-  --color-ink: #1d1d1f;
+  /* Color - Canvas & Surfaces */
+  --color-canvas: #FFFFFF;
+  --color-canvas-subtle: #F5F5F7;
+  --color-canvas-elevated: #FAFAFC;
+
+  /* Color - Typography Ink */
+  --color-ink: #1D1D1F;
   --color-ink-secondary: #333336;
-  --color-ink-tertiary: #6e6e73;
-  --color-ink-quaternary: #86868b;
+  --color-ink-tertiary: #6E6E73;
+  --color-ink-quaternary: #86868B;
+  --color-white: #FFFFFF;
   --color-black: #000000;
-  --color-white: #ffffff;
-  --color-link: #0066cc;
-  --color-link-on-dark: #2997ff;
-  --color-action: #0071e3;
-  --color-action-hover: #0076df;
-  --color-action-active: #006edb;
+
+  /* Color - Interactive & Action */
+  --color-link: #0066CC;
+  --color-link-dark: #2997FF;
+  --color-action: #0071E3;
+  --color-action-hover: #0076DF;
+  --color-action-active: #006EDB;
+  --color-action-subtle: rgba(0, 113, 227, 0.08);
+
+  /* Color - Dividers & Borders */
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-subtle: rgba(0, 0, 0, 0.04);
+  --color-border-focus: rgba(0, 113, 227, 0.4);
   --color-divider: rgba(0, 0, 0, 0.16);
   --color-divider-dark: rgba(255, 255, 255, 0.24);
 
-  /* Typography */
+  /* Color - Semantic Feedback */
+  --color-success: #008009;
+  --color-success-bg: rgba(0, 128, 9, 0.08);
+  --color-warning: #B64400;
+  --color-warning-bg: rgba(182, 68, 0, 0.08);
+  --color-danger: #E30000;
+  --color-danger-bg: rgba(227, 0, 0, 0.08);
+
+  /* Typography Stacks */
   --font-display: "SF Pro Display", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-text: "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --font-fallback: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-weight-regular: 400;
-  --font-weight-semibold: 600;
-  --type-hero: clamp(2rem, 4vw, 3.5rem);
-  --type-body: 1.0625rem;
-  --type-small: 0.75rem;
+  --font-fallback: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Spacing */
+  /* 4px Base Spacing Scale */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -671,172 +402,114 @@ and project.
   --space-16: 64px;
   --space-20: 80px;
   --space-24: 96px;
+  --space-30: 120px;
 
-  /* Layout */
-  --page-gutter: clamp(16px, 3vw, 48px);
+  /* Layout & Dimensions */
   --content-max: 1200px;
+  --container-max: 1140px;
   --tile-gutter: 12px;
   --nav-height: 44px;
   --nav-height-compact: 48px;
+  --page-gutter: clamp(16px, 3vw, 48px);
 
-  /* Shape */
+  /* Shape & Radii */
   --radius-none: 0;
-  --radius-control: 8px;
-  --radius-control-large: 12px;
+  --radius-sm: 8px;
+  --radius-input: 12px;
+  --radius-card: 16px;
   --radius-pill: 999px;
 
-  /* Motion */
+  /* Elevation Shadows */
+  --shadow-subtle: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.06);
+  --shadow-modal: 0 20px 48px rgba(0, 0, 0, 0.12);
+
+  /* Motion & Transitions */
   --motion-fast: 150ms;
   --motion-normal: 240ms;
   --motion-slow: 320ms;
   --ease-standard: cubic-bezier(0.28, 0.11, 0.32, 1);
 }
-Navigation material (optional)
-.global-nav {
-  background: rgba(250, 250, 252, 0.8);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  backdrop-filter: saturate(180%) blur(20px);
-}
+```
 
-@supports not ((backdrop-filter: blur(20px))) {
-  .global-nav {
-    background: rgba(250, 250, 252, 0.92);
-  }
-}
-Do not apply the blur treatment to every card or section. It belongs
-only where the navigation material needs to sit above content.
-13. Suggested component architecture
-Use the project's existing framework and styling approach. The component
-names below are recommendations, not mandatory abstractions.
-- SiteHeader
-- GlobalNavigation
-- DesktopCategoryMenu
-- MobileNavigation
-- AnnouncementBar
-- CampaignHero
-- ProductPromoTile
-- PromoGrid
-- ProductFeatureSection
-- MediaCarousel
-- TextLink
-- PrimaryAction
-- SearchOverlay
-- ShoppingBagPanel
-- FootnoteList
-- SiteFooter
-- FooterAccordion
-Component API guidance
-- Separate campaign/product content data from presentation where
-  practical.
-- Prefer tokens over repeated hard-coded styles.
-- Use explicit variants such as light, dark, centered,
-  fullBleed, and split.
-- Avoid a single inflexible component that tries to handle every
-  visually different campaign.
-- Document exceptions when a campaign genuinely needs custom art
-  direction.
-- Keep interactions functional and testable; avoid decorative controls
-  that look interactive but do nothing.
-14. Primary workflow specifications
-14.1 Product discovery to purchase
-1. User enters from the homepage, category navigation, or search.
-2. User reviews the product overview and key benefits.
-3. User compares available configurations and understands the price.
-4. User reviews trade-in/financing options when applicable.
-5. User chooses delivery or pickup when supported.
-6. User reviews the final order summary and proceeds to checkout.
-Every transition should preserve the selected product and configuration.
-Pricing and offer terms must come from a trusted data source.
-14.2 Offer discovery
-1. User sees a concise offer ribbon or product-level offer callout.
-2. User opens the offer details.
-3. User can identify eligibility, participating cards, tenure, caps,
-   exclusions, and dates.
-4. User returns to the product or purchase flow without losing context.
-14.3 Support/store discovery
-1. User opens Support or the footer.
-2. User selects a relevant help topic or store finder.
-3. Destination is valid and works on mobile.
-4. If a destination is unavailable, provide a clear explanation and an
-   alternate path.
-15. QA and definition of done
-Visual quality
-- [ ] Page hierarchy reads correctly at a glance.
-- [ ] Product imagery is high quality, correctly cropped, and not
-  distorted.
-- [ ] Headlines, supporting copy, and CTAs align consistently.
-- [ ] Color, typography, spacing, and button styles use documented
-  tokens.
-- [ ] Light and dark themes preserve legibility.
-- [ ] No unnecessary shadows, borders, gradients, or card rounding
-  have been introduced.
-Responsive quality
-- [ ] Tested at 320, 375, 390, 734, 768, 833, 1024, 1068, 1280, 1440,
-  and 1920px.
-- [ ] No horizontal overflow.
-- [ ] Menus, search, bag, carousels, and footer work with touch.
-- [ ] Hero text and actions do not overlap important imagery.
-- [ ] Mobile crops are intentionally art-directed.
-- [ ] Safe-area insets and landscape layouts are handled.
-Accessibility
-- [ ] Keyboard focus is visible and logical.
-- [ ] Icon-only controls have accessible names.
-- [ ] Headings and landmarks are semantic.
-- [ ] Contrast is checked on actual backgrounds and images.
-- [ ] Reduced motion is respected.
-- [ ] Overlays manage and restore focus correctly.
-- [ ] Form errors are clear and associated with fields.
-- [ ] Screen-reader and keyboard spot checks are complete.
-Performance
-- [ ] Main hero media is prioritized.
-- [ ] Below-the-fold media is lazy-loaded appropriately.
-- [ ] Images are responsive and compressed.
-- [ ] Media dimensions prevent layout shifts.
-- [ ] No unnecessary blocking scripts or heavy animation.
-- [ ] Core Web Vitals have been measured.
-Functional integrity
-- [ ] Every CTA has a real destination or action.
-- [ ] Search handles loading, results, empty, clear, and error states.
-- [ ] Bag/cart count and totals are accurate.
-- [ ] No placeholder links or fake offer claims remain.
-- [ ] No new console errors or failed critical network requests.
-- [ ] Purchase and offer information is sourced from current trusted
-  data.
-16. Reference interpretation and limitations
-This specification synthesizes four supplied files: 1. A
-reverse-engineered Apple India homepage and UX specification. 2. A
-broader Apple Store India platform/navigation and commerce
-specification. 3. A detailed as-shipped design-system audit emphasizing
-exact navigation behavior, color tokens, typography, spacing, and
-current campaign rhythm. 4. An implementation-oriented Apple-inspired
-design system with component, responsive, accessibility, and QA
-guidance.
-Reconciliation decisions
-- Where the files differed, the more detailed system audit was
-  preferred for the design's signature behaviors: 12px tile gutters,
-  square promo tiles, restrained/no tile shadows, compact nav at
-  833px, and campaign-first hierarchy.
-- Typography sizes and hero heights are documented as starting
-  points, not guaranteed internal Apple values.
-- Campaign products, dates, streaming titles, offer amounts, and page
-  sequence are time-sensitive and should not be hard-coded as
-  permanent requirements.
-- Accessibility requirements are written as the implementation target,
-  not a claim that every reference behavior has been independently
-  audited against every WCAG criterion.
-- This document describes public-facing patterns. It does not expose
-  or claim access to Apple's private design files or source CSS.
-Official reference links
-- Apple India: https://www.apple.com/in/
-- Apple Human Interface Guidelines --- Foundations:
-  https://developer.apple.com/design/human-interface-guidelines/foundations
-- Apple Human Interface Guidelines --- Layout:
-  https://developer.apple.com/design/human-interface-guidelines/layout
-- Apple Developer Design: https://developer.apple.com/design/
-Final direction
-Build the experience as a coherent system, not a collage of screenshots:
-quiet navigation, neutral chrome, full-bleed product storytelling, short
-benefit-led copy, clear blue actions, carefully art-directed responsive
-imagery, honest India-specific commerce disclosures, and a useful
-footer. Validate every inferred measurement against current reference
-screenshots and the actual product before production sign-off.
+---
+
+## 13. Component Mapping to Project Templates
+
+The following table connects the design specification directly to existing Django templates:
+
+| Component Specification | Template File | Implementation Responsibility |
+| :--- | :--- | :--- |
+| **Global Navigation & Header** | `templates/base.html` | Sticky 44px bar, quiet chrome blur, role-based auth menu |
+| **Announcement Ribbon** | `templates/core/home.html` | Corridor pilot status, en-IN milestone callout |
+| **Corridor Hero & Waypoints**| `templates/core/home.html` | Expressway overview, paired promo tiles with 12px gutters |
+| **Interactive Route Map** | `templates/chargers/search.html` | Leaflet map container `#corridor-map`, waypoint markers |
+| **Charger Detail & Slot Grid**| `templates/chargers/detail.html` | Facility photos, kW specs, pricing breakdown, `.slot-grid` |
+| **Slot Lock & Checkout** | `templates/bookings/checkout.html` | Transparent tariff, 15% platform fee, 85% host payout |
+| **Session Meter & Telemetry** | `templates/sessions/start_session.html` | Starting kWh meter entry, photo verification, disclaimer |
+| **Host Listing Hub** | `templates/chargers/host_list.html` | Host listings overview, status badges, earnings counter |
+| **Executive Admin Console** | `templates/administration/dashboard.html` | Host KYC queue, charger moderation cards, audit explorer |
+| **Footer & Disclosures** | `templates/base.html` | Multi-column directory, disclaimer strip, en-IN legal base |
+
+---
+
+## 14. Primary Workflow Specifications
+
+### 14.1 Corridor Charger Discovery to Slot Booking
+1. **Entry:** Driver visits `/chargers/` and filters by connector (`CCS2` or `Type 2`) or enters waypoint (`Jewar`).
+2. **Evaluation:** Interactive Leaflet map centers on Yamuna Expressway. Driver clicks on Jewar Interchange (KM 42) pin.
+3. **Detail Review:** Driver inspects photos, verified host badge, parking bay instructions, and ₹/kWh rate.
+4. **Slot Locking:** Driver taps an available 1-hour time slot. System atomically creates a `SlotLock` (5-minute hold).
+5. **Checkout:** Driver reviews transparent summary (Tariff + 15% fee) and clicks "Confirm & Pay (Simulated)".
+6. **Confirmation:** System displays confirmed booking, access PIN, and host contact information.
+
+### 14.2 Session Check-in and Meter Reading Telemetry
+1. **Arrival:** Driver arrives at host property and navigates to active booking.
+2. **Start Telemetry:** Driver taps "Start Charging Session", inputs current vehicle/charger meter kWh reading, and attaches photo.
+3. **Active Session:** Live countdown timer displays elapsed time and estimated energy consumption.
+4. **End Telemetry:** Driver taps "End Session", inputs final meter reading, and reviews total kWh consumed.
+5. **Settlement & Review:** Final bill calculated; driver rates the charging experience with a 5-star verified review.
+
+### 14.3 Host Onboarding & KYC Moderation
+1. **Submission:** Host navigates to `/accounts/host-onboarding/`, enters property address along expressway, and uploads electricity bill & identity proof.
+2. **Charger Setup:** Host specifies charger model, connector types, max kW output, and tariff rules.
+3. **Admin Review:** Administrator reviews submitted documents in `/administration/verifications/` and approves or rejects with feedback.
+4. **Activation:** Approved charger goes live immediately on the Yamuna Expressway map.
+
+---
+
+## 15. QA and Definition of Done Checklist
+
+### Visual & Aesthetic Standards
+- [ ] Visual hierarchy is dominated by real charger and facility photography.
+- [ ] Exact color tokens (`#0071E3` action blue, `#F5F5F7` subtle canvas) applied consistently.
+- [ ] Paired promo tiles maintain consistent 12px gutters.
+- [ ] Zero arbitrary drop shadows or decorative gradients on full-bleed modules.
+- [ ] Pill radius (`999px`) used for all primary action buttons.
+
+### Responsive & Device Quality
+- [ ] Verified across 320px, 375px, 768px, 834px, 1024px, 1200px, and 1440px viewports.
+- [ ] Zero horizontal scrollbar or element overflow at 320px.
+- [ ] Interactive Leaflet map touch controls behave predictably on mobile devices.
+- [ ] Slot booking grid switches from multi-column desktop to comfortable 2-column mobile cards.
+
+### Accessibility Standards
+- [ ] Color contrast verified: all normal text ≥ 4.5:1, all UI boundaries and large text ≥ 3:1.
+- [ ] All interactive buttons and links have visible 3px focus indicators.
+- [ ] Slot buttons provide explicit `aria-selected` and `aria-disabled` states.
+- [ ] Full keyboard navigation supported without focus traps.
+
+### Functional & Integrity Checks
+- [ ] All CTA buttons link to valid, working Django routes.
+- [ ] Simulated payments and manual meter telemetry are explicitly watermarked.
+- [ ] Real-time atomic slot locking prevents double bookings.
+- [ ] Test suite maintains 100% pass rate (`pytest` 21/21 passed).
+
+---
+
+## 16. Reference Interpretation & Limitations
+
+This specification adapts Apple India's quiet, photography-first design language to the peer-to-peer EV charging ecosystem:
+- **Preserved:** All visual design tokens (colors, typography scales, spacing, pill radius, motion curves, and quiet chrome navigation).
+- **Adapted:** Replaced retail storefront concepts (iPhone, Mac, shopping cart, trade-in, retail stores) with EV Share infrastructure (CCS2/Type 2 chargers, Yamuna Expressway corridor waypoints, host KYC, slot locking, meter telemetry, and driver garages).
+- **Reconciliation:** All styling maps directly to the active Django application in `c:\Users\Pranav\Desktop\EV Share` without breaking existing routes or backend services.

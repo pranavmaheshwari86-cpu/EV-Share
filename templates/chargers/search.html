@@ -154,9 +154,42 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const map = L.map('corridor-map').setView([centerLat, centerLng], 9);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: '© OpenStreetMap contributors'
+  // Carto Positron basemap (subdued roads, high-contrast Apple-quiet styling, no OSM 403 blocks)
+  const cartoPositron = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19,
+    subdomains: 'abcd',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>'
+  }).addTo(map);
+
+  // Carto Voyager detailed basemap (alternative layer with richer color and topography)
+  const cartoVoyager = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+    maxZoom: 19,
+    subdomains: 'abcd',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a>'
+  });
+
+  // Layer control for switching basemaps
+  L.control.layers({
+    'Quiet Light (Apple Style)': cartoPositron,
+    'Detailed Voyager': cartoVoyager
+  }, null, { position: 'topright' }).addTo(map);
+
+  // Yamuna Expressway corridor polyline (Greater Noida -> Dankaur -> Jewar -> Tappal -> Mathura -> Agra)
+  const yamunaCorridorPath = [
+    [28.4744, 77.5040], // Greater Noida Zero Point
+    [28.3587, 77.5560], // Dankaur Interchange
+    [28.1287, 77.5560], // Jewar Airport Interchange
+    [28.0050, 77.5850], // Tappal / Aligarh Border
+    [27.4924, 77.6737], // Mathura Toll Plaza
+    [27.2050, 78.0850]  // Agra Kuberpur Interchange
+  ];
+  L.polyline(yamunaCorridorPath, {
+    color: '#0071E3',
+    weight: 3,
+    opacity: 0.7,
+    dashArray: '6, 8',
+    lineCap: 'round',
+    lineJoin: 'round'
   }).addTo(map);
 
   const markerBounds = [];
@@ -172,15 +205,18 @@ document.addEventListener('DOMContentLoaded', function() {
         color: '#FFFFFF',
         weight: 2,
         opacity: 1,
-        fillOpacity: 0.9
+        fillOpacity: 0.95
       }).addTo(map);
 
       const popupContent = `
-        <div style="font-family: -apple-system, BlinkMacSystemFont, sans-serif; min-width: 170px;">
-          <strong style="font-size: 13px; color: #1D1D1F;">${m.title}</strong><br>
-          <span style="font-size: 11px; color: #6E6E73;">${m.city} &bull; ${m.power} kW (${m.type})</span><br>
-          <span style="font-size: 12px; font-weight: 600; color: #0071E3;">₹${m.price}/kWh</span><br>
-          <a href="${m.url}" style="display: inline-block; margin-top: 6px; font-size: 11px; color: #0071E3; font-weight: 600; text-decoration: none;">View Details →</a>
+        <div style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif; min-width: 180px; padding: 4px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <strong style="font-size: 13px; color: #1D1D1F; font-weight: 600;">${m.title}</strong>
+            <span style="font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 999px; background: ${isDC ? 'rgba(123, 31, 162, 0.1)' : 'rgba(0, 113, 227, 0.1)'}; color: ${markerColor};">${m.power} kW</span>
+          </div>
+          <div style="font-size: 11px; color: #6E6E73; margin-bottom: 4px;">📍 ${m.city} &bull; ${m.type}</div>
+          <div style="font-size: 13px; font-weight: 700; color: #1D1D1F; margin-bottom: 8px;">₹${m.price}<span style="font-size: 10px; font-weight: normal; color: #86868B;">/kWh</span></div>
+          <a href="${m.url}" class="btn-ev-pill btn-ev-primary" style="display: block; text-align: center; padding: 5px 12px; font-size: 11px; text-decoration: none; border-radius: 999px; color: #FFFFFF; background: #0071E3;">View & Reserve Slot →</a>
         </div>
       `;
       circleMarker.bindPopup(popupContent);
@@ -189,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   if (markerBounds.length > 0) {
-    map.fitBounds(markerBounds, { padding: [30, 30], maxZoom: 12 });
+    map.fitBounds(markerBounds, { padding: [35, 35], maxZoom: 12 });
   }
 
   // Geolocation trigger
